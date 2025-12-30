@@ -1,0 +1,61 @@
+version: '3.9'
+services:
+  traefik:
+    image: traefik:v2.11
+    command:
+      - --providers.docker=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.httpchallenge=true
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.le.acme.email=${TRAEFIK_EMAIL}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_certs:/letsencrypt
+    labels:
+      - traefik.enable=true
+
+  api:
+    build:
+      context: ../apps/api
+    env_file:
+      - ../apps/api/.env
+    volumes:
+      - api_uploads:/app/uploads
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.api.rule=Host(`api.capitalta.abdev.click`)
+      - traefik.http.routers.api.entrypoints=websecure
+      - traefik.http.routers.api.tls.certresolver=le
+      - traefik.http.middlewares.api-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.api-http.rule=Host(`api.capitalta.abdev.click`)
+      - traefik.http.routers.api-http.entrypoints=web
+      - traefik.http.routers.api-http.middlewares=api-https-redirect
+    depends_on:
+      - postgres
+    networks:
+      - internal
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: capitalta
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+volumes:
+  traefik_certs:
+  pg_data:
+  api_uploads:
+
+networks:
+  internal:
+    driver: bridge

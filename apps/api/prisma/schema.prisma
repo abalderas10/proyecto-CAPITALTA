@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Rol {
+  CLIENTE
+  ANALISTA
+  ADMIN
+}
+
+enum EstadoSolicitud {
+  DRAFT
+  ENVIADA
+  EN_REVISION
+  APROBADA
+  RECHAZADA
+  CANCELADA
+}
+
+enum TipoOrganizacion {
+  PERSONA_MORAL
+  PERSONA_FISICA
+}
+
+model Usuario {
+  id              String         @id @default(cuid())
+  email           String         @unique
+  nombre          String
+  passwordHash    String
+  rol             Rol
+  mfaEnabled      Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  organizacion    Organizacion?  @relation(fields: [organizacionId], references: [id])
+  organizacionId  String?
+  solicitudes     Solicitud[]    @relation("SolicitudCliente")
+  documentos      Documento[]    @relation("DocumentoOwner")
+  eventosActor    Evento[]       @relation("EventoActor")
+}
+
+model Organizacion {
+  id          String       @id @default(cuid())
+  tipo        TipoOrganizacion
+  nombre      String
+  rfc         String       @unique
+  usuarios    Usuario[]
+  solicitudes Solicitud[]  @relation("SolicitudOrganizacion")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Solicitud {
+  id             String            @id @default(cuid())
+  producto       String
+  montoCentavos  Int
+  plazoMeses     Int
+  estado         EstadoSolicitud   @default(DRAFT)
+  cliente        Usuario           @relation("SolicitudCliente", fields: [clienteId], references: [id])
+  clienteId      String
+  organizacion   Organizacion      @relation("SolicitudOrganizacion", fields: [organizacionId], references: [id])
+  organizacionId String
+  garantias      Garantia[]
+  documentos     Documento[]
+  evaluaciones   Evaluacion[]
+  eventos        Evento[]          @relation("EventoSolicitud")
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([estado])
+}
+
+model Garantia {
+  id             String     @id @default(cuid())
+  solicitud      Solicitud  @relation(fields: [solicitudId], references: [id])
+  solicitudId    String
+  tipo           String
+  ubicacion      String
+  avaluoCentavos Int
+  lat            Float?
+  lng            Float?
+  createdAt      DateTime   @default(now())
+}
+
+model Documento {
+  id          String    @id @default(cuid())
+  solicitud   Solicitud @relation(fields: [solicitudId], references: [id])
+  solicitudId String
+  tipo        String
+  ruta        String
+  hash        String
+  version     Int       @default(1)
+  owner       Usuario?  @relation("DocumentoOwner", fields: [ownerId], references: [id])
+  ownerId     String?
+  createdAt   DateTime  @default(now())
+}
+
+model Evaluacion {
+  id           String    @id @default(cuid())
+  solicitud    Solicitud @relation(fields: [solicitudId], references: [id])
+  solicitudId  String
+  score        Float
+  data         Json
+  reglas       Json
+  createdAt    DateTime  @default(now())
+}
+
+model Evento {
+  id           String     @id @default(cuid())
+  actor        Usuario?   @relation("EventoActor", fields: [actorId], references: [id])
+  actorId      String?
+  solicitud    Solicitud? @relation("EventoSolicitud", fields: [solicitudId], references: [id])
+  solicitudId  String?
+  tipo         String
+  detalles     Json
+  createdAt    DateTime   @default(now())
+}

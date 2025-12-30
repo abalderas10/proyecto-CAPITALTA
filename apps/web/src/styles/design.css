@@ -1,0 +1,28 @@
+:root {
+  /* Brand */
+  --brand-primary: #0ea5e9;
+  --brand-primaryDark: #0284c7;
+  --brand-navy: #002c5f;
+  --brand-secondary: #14b8a6;
+  --brand-accent: #f59e0b;
+  --brand-lightBg: #f1f5f9;
+  --brand-slate: #e2e8f0;
+
+  /* Semantic */
+  --semantic-success: #10b981;
+  --semantic-warning: #f59e0b;
+  --semantic-error: #ef4444;
+  --semantic-info: #0ea5e9;
+
+  /* Neutrals */
+  --neutral-900: #111827;
+  --neutral-50: #f9fafb;
+
+  --radius: 8px;
+  --shadow: 0 1px 2px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.card {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}

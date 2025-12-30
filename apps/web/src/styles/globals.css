@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import './design.css';
+
+html, body {
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background-color: var(--brand-lightBg);
+  color: var(--neutral-900);
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* Tokens moved to design.css */
+
+.container {
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+}

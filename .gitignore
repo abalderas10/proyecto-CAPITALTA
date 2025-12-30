@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.next/
+.vercel/
+.DS_Store
+*.log
+.env
+apps/*/.env
+apps/*/.env.local
+apps/*/.env.production
+apps/*/.env.development
+deploy/certs/
