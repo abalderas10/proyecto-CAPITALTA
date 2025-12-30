@@ -1,127 +1,154 @@
-'use client';
+"use client"
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/Card';
-import { Slider } from '@/components/ui/Slider';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { Button } from '@/components/ui/Button';
-import { calcularPrestamo, LoanCalculationResult } from '@/lib/utils/loanCalculator';
-import type { CalculatorConfig } from '@/lib/types';
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/Card"
+import { Slider } from "@/components/ui/Slider"
+import { Input } from "@/components/ui/Input"
+import { Label } from "@/components/ui/Label"
+import { Button } from "@/components/ui/Button"
+import { CalculatorConfig } from "@/data/calculatorConfigs"
+import { calcularPrestamo } from "@/lib/utils/loanCalculator"
+import { useRouter } from "next/navigation"
 
 interface LoanCalculatorProps {
-  config: CalculatorConfig;
-  onApply: (monto: number, plazo: number) => void;
+  config: CalculatorConfig
+  onApply?: (monto: number, plazo: number) => void
 }
 
-// Función para formatear números como moneda MXN
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-  }).format(value);
-};
-
 export function LoanCalculator({ config, onApply }: LoanCalculatorProps) {
-  const [monto, setMonto] = useState(config.defaultMonto);
-  const [plazo, setPlazo] = useState(config.defaultPlazo);
-  const [results, setResults] = useState<LoanCalculationResult>({ 
-    pagoMensual: 0, 
-    totalAPagar: 0, 
-    totalIntereses: 0 
-  });
+  const router = useRouter()
+  const [monto, setMonto] = useState(config.defaultMonto)
+  const [plazo, setPlazo] = useState(config.defaultPlazo)
+  const [results, setResults] = useState(
+    calcularPrestamo({ monto: config.defaultMonto, plazo: config.defaultPlazo, tasaAnual: config.tasaAnual })
+  )
 
   useEffect(() => {
-    const newResults = calcularPrestamo({
-      monto,
-      plazo,
-      tasaAnual: config.tasaAnual,
-    });
-    setResults(newResults);
-  }, [monto, plazo, config.tasaAnual]);
+    setResults(calcularPrestamo({ monto, plazo, tasaAnual: config.tasaAnual }))
+  }, [monto, plazo, config.tasaAnual])
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("es-MX", {
+      style: "currency",
+      currency: "MXN",
+      minimumFractionDigits: 2,
+    }).format(value)
+  }
 
   const handleMontoChange = (value: number[]) => {
-    setMonto(value[0]);
-  };
+    setMonto(value[0])
+  }
 
   const handlePlazoChange = (value: number[]) => {
-    setPlazo(value[0]);
-  };
+    setPlazo(value[0])
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value.replace(/[^0-9]/g, ""))
+    if (value >= config.minMonto && value <= config.maxMonto) {
+      setMonto(value)
+    }
+  }
 
   return (
-    <Card className="w-full max-w-lg mx-auto">
+    <Card className="w-full max-w-md mx-auto shadow-lg border-t-4 border-t-primary">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center text-gray-900">{config.title}</CardTitle>
+        <CardTitle className="text-xl text-center">{config.title}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-8">
-        <div className="space-y-4">
+      <CardContent className="space-y-6">
+        {/* Monto Section */}
+        <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <Label htmlFor="monto" className="text-lg text-gray-700">Monto del Préstamo</Label>
-            <Input
-              id="monto"
-              type="text"
-              value={formatCurrency(monto)}
-              className="w-48 text-right text-lg font-semibold bg-gray-50"              
-              readOnly // Para evitar entrada directa conflictiva, el slider es la fuente de verdad
-            />
+            <Label htmlFor="monto">Monto del Préstamo</Label>
+            <div className="relative w-32">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+              <Input
+                id="monto"
+                value={monto.toLocaleString()}
+                onChange={(e) => {
+                   const val = Number(e.target.value.replace(/[^0-9]/g, ''));
+                   // Allow typing, but maybe clamp on blur? For now just set state if valid number
+                   setMonto(val);
+                }}
+                onBlur={() => {
+                   if(monto < config.minMonto) setMonto(config.minMonto);
+                   if(monto > config.maxMonto) setMonto(config.maxMonto);
+                }}
+                className="pl-6 text-right font-medium"
+              />
+            </div>
           </div>
           <Slider
-            id="monto-slider"
+            value={[monto]}
             min={config.minMonto}
             max={config.maxMonto}
             step={config.stepMonto}
-            value={[monto]}
             onValueChange={handleMontoChange}
-            className="accent-teal-600"
+            className="py-4"
           />
-          <div className="flex justify-between text-xs text-gray-400">
+          <div className="flex justify-between text-xs text-muted-foreground">
             <span>{formatCurrency(config.minMonto)}</span>
             <span>{formatCurrency(config.maxMonto)}</span>
           </div>
         </div>
-        <div className="space-y-4">
+
+        {/* Plazo Section */}
+        <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <Label htmlFor="plazo" className="text-lg text-gray-700">Plazo (meses)</Label>
-            <Input
-              id="plazo"
-              type="number"
-              value={plazo}
-              className="w-24 text-right text-lg font-semibold bg-gray-50"
-              readOnly
-            />
+            <Label htmlFor="plazo">Plazo (meses)</Label>
+            <span className="text-2xl font-bold text-primary">{plazo}</span>
           </div>
           <Slider
-            id="plazo-slider"
-            min={config.minPlazo}
-            max={config.maxPlazo}
-            // Usar un step que se alinee con las opciones para un movimiento más limpio
-            step={config.plazoOptions.length > 1 ? config.plazoOptions[1] - config.plazoOptions[0] : 1}
-            value={[plazo]}
-            onValueChange={handlePlazoChange}
-            className="accent-teal-600"
+             value={[plazo]}
+             min={config.minPlazo}
+             max={config.maxPlazo}
+             step={1} // Step 1 to allow smooth sliding, but we could snap to options if needed
+             onValueChange={handlePlazoChange}
+             className="py-4"
           />
-          <div className="flex justify-between text-xs text-gray-400">
+           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{config.minPlazo} meses</span>
             <span>{config.maxPlazo} meses</span>
           </div>
         </div>
-        <div className="text-center bg-gray-50 p-6 rounded-lg border border-gray-100">
-          <p className="text-gray-600 mb-2">Pago Mensual Estimado</p>
-          <p className="text-4xl font-bold text-teal-600">{formatCurrency(results.pagoMensual)}</p>
-          <div className="text-sm text-gray-500 mt-4 space-y-1">
-            <p>Total a pagar: <span className="font-medium text-gray-900">{formatCurrency(results.totalAPagar)}</span></p>
-            <p>Intereses: <span className="font-medium text-gray-900">{formatCurrency(results.totalIntereses)}</span></p>
+
+        {/* Results Section */}
+        <div className="mt-6 pt-6 border-t space-y-4">
+          <div className="text-center space-y-1">
+            <p className="text-sm text-muted-foreground">Pago Mensual Estimado</p>
+            <p className="text-4xl font-bold text-primary">{formatCurrency(results.pagoMensual)}</p>
           </div>
-          <p className="text-xs text-gray-400 mt-4 pt-4 border-t border-gray-200">
-            *Tasa de interés anual estimada: {(config.tasaAnual * 100).toFixed(2)}% (sin IVA, sujeta a aprobación).
+          
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="text-muted-foreground">Total a Pagar</p>
+              <p className="font-semibold">{formatCurrency(results.totalAPagar)}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-muted-foreground">Intereses</p>
+              <p className="font-semibold">{formatCurrency(results.totalIntereses)}</p>
+            </div>
+          </div>
+          
+          <p className="text-xs text-center text-muted-foreground">
+            *Tasa de interés anual estimada: {(config.tasaAnual * 100).toFixed(2)}%
           </p>
         </div>
       </CardContent>
       <CardFooter>
-        <Button size="lg" className="w-full text-lg h-12 bg-teal-600 hover:bg-teal-700 text-white" onClick={() => onApply(monto, plazo)}>
+        <Button 
+          className="w-full text-lg h-12" 
+          onClick={() => {
+            if (onApply) {
+              onApply(monto, plazo)
+            } else {
+              router.push('/solicitud')
+            }
+          }}
+        >
           {config.ctaText}
         </Button>
       </CardFooter>
     </Card>
-  );
+  )
 }

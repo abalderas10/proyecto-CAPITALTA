@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { apiGet, apiPatch } from '@/lib/api'
+import { useSession } from 'next-auth/react'
 
 const datosSchema = z.object({
   email: z.string().email(),
@@ -21,11 +22,12 @@ const datosSchema = z.object({
 
 const creditoSchema = z.object({
   producto: z.string().min(2),
-  montoCentavos: z.number().int().positive(),
+  monto: z.number().positive(),
   plazoMeses: z.number().int().positive()
 })
 
 export default function Form() {
+  const { data: session } = useSession()
   const [step, setStep] = useState(0)
   const [ids, setIds] = useState<{ usuarioId: string; organizacionId: string } | null>(null)
   const [toast, setToast] = useState<string>('')
@@ -38,6 +40,17 @@ export default function Form() {
   useEffect(() => {
     const stored = localStorage.getItem('solicitud_ids')
     if (stored) setIds(JSON.parse(stored))
+
+    // Prefill from calculator
+    const prefilledMonto = localStorage.getItem('prefilledMonto')
+    const prefilledPlazo = localStorage.getItem('prefilledPlazo')
+    
+    if (prefilledMonto) {
+      credito.setValue('monto', Number(prefilledMonto))
+    }
+    if (prefilledPlazo) {
+      credito.setValue('plazoMeses', Number(prefilledPlazo))
+    }
   }, [])
 
   const submitDatos = async (e: any) => {
@@ -57,9 +70,26 @@ export default function Form() {
     e.preventDefault()
     const valid = await credito.trigger()
     if (!valid || !ids) return
-    const body = creditoSchema.parse(credito.getValues())
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
-    const r = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/solicitudes`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ ...body, clienteId: ids.usuarioId, organizacionId: ids.organizacionId }) })
+    const values = creditoSchema.parse(credito.getValues())
+    
+    // Transform monto to montoCentavos
+    const body = {
+      producto: values.producto,
+      montoCentavos: Math.round(values.monto * 100),
+      plazoMeses: values.plazoMeses
+    }
+
+    const token = session?.accessToken
+    const headers: HeadersInit = { 'Content-Type': 'application/json' }
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
+    const r = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/solicitudes`, { 
+      method: 'POST', 
+      headers, 
+      body: JSON.stringify({ ...body, clienteId: ids.usuarioId, organizacionId: ids.organizacionId }) 
+    })
     const s = await r.json()
     localStorage.setItem('solicitud_id', s.id)
     setStep(2)
@@ -95,6 +125,71 @@ export default function Form() {
           />
           <Button type="submit">Guardar y continuar</Button>
         </form>
+        </Card>
+      )}
+
+      {step === 1 && (
+        <Card>
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Detalles del Crédito</h2>
+            <form onSubmit={submitCredito} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Producto</label>
+                <Controller
+                  control={credito.control}
+                  name="producto"
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccione un producto" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="CREDITO_PUENTE">Crédito Puente</SelectItem>
+                        <SelectItem value="CREDITO_PYME">Crédito Pyme</SelectItem>
+                        <SelectItem value="PRESTAMO_PERSONAL">Préstamo Personal</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {credito.formState.errors.producto && (
+                  <p className="text-sm text-red-500">{credito.formState.errors.producto.message as string}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Monto Solicitado</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                  <Input 
+                    type="number" 
+                    placeholder="0.00" 
+                    className="pl-7"
+                    {...credito.register('monto', { valueAsNumber: true })} 
+                  />
+                </div>
+                {credito.formState.errors.monto && (
+                  <p className="text-sm text-red-500">{credito.formState.errors.monto.message as string}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Plazo (meses)</label>
+                <Input 
+                  type="number" 
+                  placeholder="Plazo en meses" 
+                  {...credito.register('plazoMeses', { valueAsNumber: true })} 
+                />
+                {credito.formState.errors.plazoMeses && (
+                  <p className="text-sm text-red-500">{credito.formState.errors.plazoMeses.message as string}</p>
+                )}
+              </div>
+
+              <div className="flex justify-between pt-4">
+                <Button type="button" variant="outline" onClick={() => setStep(0)}>Atrás</Button>
+                <Button type="submit">Continuar</Button>
+              </div>
+            </form>
+          </div>
         </Card>
       )}
     </div>

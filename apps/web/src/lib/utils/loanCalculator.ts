@@ -1,3 +1,4 @@
+
 export interface LoanCalculationParams {
   monto: number;
   plazo: number; // en meses
@@ -20,6 +21,7 @@ export function calcularPrestamo(
   const tasaMensual = tasaAnual / 12;
   const factor = Math.pow(1 + tasaMensual, plazo);
 
+  // M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1 ]
   const pagoMensual = (monto * tasaMensual * factor) / (factor - 1);
   const totalAPagar = pagoMensual * plazo;
   const totalIntereses = totalAPagar - monto;
