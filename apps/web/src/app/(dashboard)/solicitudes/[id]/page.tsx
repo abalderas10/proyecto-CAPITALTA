@@ -52,7 +52,7 @@ export default function Page({ params }: { params: { id: string } }) {
         <div className="flex gap-2">
           <Button onClick={() => setEstado('EN_REVISION')}>Marcar en revisión</Button>
           <Button onClick={() => setEstado('APROBADA')}>Aprobar</Button>
-          <Button variant="danger" onClick={() => setEstado('RECHAZADA')}>Rechazar</Button>
+          <Button variant="destructive" onClick={() => setEstado('RECHAZADA')}>Rechazar</Button>
         </div>
         <div className="flex gap-2 items-center">
           <input className="border rounded px-3 py-2 flex-1" placeholder="Agregar nota interna" value={note} onChange={e => setNote(e.target.value)} />

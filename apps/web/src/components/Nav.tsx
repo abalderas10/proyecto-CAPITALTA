@@ -42,7 +42,7 @@ export function Nav() {
             {!token ? (
               <>
                 <a href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">Iniciar Sesión</a>
-                <a href="/solicitud/constructoras">
+                <a href="/solicitud">
                   <Button size="sm">Cotizar ahora</Button>
                 </a>
               </>

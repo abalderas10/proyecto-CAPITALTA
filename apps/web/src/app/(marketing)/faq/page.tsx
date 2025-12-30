@@ -3,7 +3,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/Accordion"
+} from "@/components/ui/accordion"
 
 export const metadata = {
   title: 'Preguntas Frecuentes — Capitalta',

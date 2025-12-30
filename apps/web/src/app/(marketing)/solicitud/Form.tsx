@@ -8,7 +8,7 @@ import { Progress } from '@/components/Progress'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { apiGet, apiPatch } from '@/lib/api'
 
 const datosSchema = z.object({
@@ -69,7 +69,7 @@ export default function Form() {
   return (
     <div className="space-y-6">
       <Progress value={(step / (steps.length - 1)) * 100} />
-      <Stepper steps={steps} value={step} onChange={setStep} />
+      <Stepper currentStep={step} totalSteps={steps.length} stepTitle={steps[step].title} />
       {toast && <div className="px-3 py-2 bg-green-100 border border-green-300 rounded">{toast}</div>}
       {step === 0 && (
         <Card>

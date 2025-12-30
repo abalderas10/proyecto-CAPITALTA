@@ -15,7 +15,7 @@ export function ConstructoraContent() {
   const handleApply = (monto: number, plazo: number) => {
     localStorage.setItem('prefilledMonto', monto.toString());
     localStorage.setItem('prefilledPlazo', plazo.toString());
-    router.push('/solicitud/constructoras');
+    router.push('/solicitud');
   };
 
   return (

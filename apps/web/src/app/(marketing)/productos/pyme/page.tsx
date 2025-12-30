@@ -82,7 +82,7 @@ export default function Page() {
           </div>
         </section>
       )}
-      <LoanCalculatorWrapper config={pymeConfig} redirectPath="/solicitud/pyme" />
+      <LoanCalculatorWrapper config={pymeConfig} redirectPath="/solicitud" />
       {c.compliance && (
         <section className="space-y-3">
           <div className="flex flex-wrap gap-2">

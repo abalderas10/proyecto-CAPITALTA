@@ -9,7 +9,7 @@ export const copyConstructoras = {
     'Desembolsos por hitos de obra'
   ],
   kpis: ['+50% tasa de aprobación', '-70% costos operativos', 'NPS >80'],
-  ctaPrimary: { label: 'Solicita tu crédito', href: '/solicitud/constructoras' },
+  ctaPrimary: { label: 'Solicita tu crédito', href: '/solicitud' },
   ctaSecondary: { label: 'Agenda asesoría', href: '/contacto' },
   faqs: [
     { q: '¿Qué documentación necesito?', a: 'Identificación, RFC, estados financieros y garantías.' },
