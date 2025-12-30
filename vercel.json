@@ -1,3 +1,13 @@
 {
-  "reactStrictMode": true
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd apps/web && npm install && npm run build",
+  "outputDirectory": "apps/web/.next",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://api.capitalta.abdev.click/api/:path*"
+    }
+  ]
 }
