@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Button } from './ui/Button'
 
 export function Hero({ 
@@ -17,7 +18,13 @@ export function Hero({
     <section className="relative rounded-xl overflow-hidden bg-[var(--brand-navy)] text-white">
       {image && (
         <div className="absolute inset-0 z-0">
-          <img src={image} alt={title} className="w-full h-full object-cover opacity-20" />
+          <Image 
+            src={image} 
+            alt={title} 
+            fill
+            className="object-cover opacity-20"
+            priority
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-navy)] to-transparent" />
         </div>
       )}

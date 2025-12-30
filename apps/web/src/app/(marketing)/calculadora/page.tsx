@@ -8,9 +8,11 @@ export default function CalculadoraShowcasePage() {
   const router = useRouter();
 
   const handleApply = (monto: number, plazo: number) => {
-    alert(`Solicitud iniciada con Monto: ${monto}, Plazo: ${plazo}`);
-    // En una implementación real, aquí redirigiríamos al formulario
-    // router.push('/solicitud/constructora');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('prefilledMonto', monto.toString())
+      localStorage.setItem('prefilledPlazo', plazo.toString())
+    }
+    router.push('/solicitud');
   };
 
   return (
