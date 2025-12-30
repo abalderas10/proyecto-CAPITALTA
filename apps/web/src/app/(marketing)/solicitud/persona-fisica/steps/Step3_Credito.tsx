@@ -1,30 +1,51 @@
-import { useFormContext } from 'react-hook-form'
-import { Input, Select } from '@/components/ui/Input'
+import { useFormContext, Controller } from 'react-hook-form'
+import { Input } from '@/components/ui/Input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
 import { Card } from '@/components/ui/Card'
 
 export function Step3_Credito() {
-  const { register, formState: { errors } } = useFormContext()
+  const { register, control, formState: { errors } } = useFormContext()
   return (
     <Card className="p-8 shadow-lg border-t-4 border-t-purple-600">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Tipo de Crédito</label>
-          <Select {...register('credito.tipo')} className={errors.credito?.tipo ? 'border-red-500 focus-visible:ring-red-500' : ''}>
-            <option value="">Selecciona</option>
-            <option value="PERSONAL">Personal</option>
-            <option value="NOMINA">Nómina</option>
-          </Select>
+          <Controller
+            control={control}
+            name="credito.tipo"
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className={errors.credito?.tipo ? 'border-red-500 focus:ring-red-500' : ''}>
+                  <SelectValue placeholder="Selecciona" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PERSONAL">Personal</SelectItem>
+                  <SelectItem value="NOMINA">Nómina</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Plazo</label>
-          <Select {...register('credito.plazo')} className={errors.credito?.plazo ? 'border-red-500 focus-visible:ring-red-500' : ''}>
-            <option value="">Selecciona</option>
-            <option value="12">12 meses</option>
-            <option value="24">24 meses</option>
-            <option value="36">36 meses</option>
-            <option value="48">48 meses</option>
-            <option value="60">60 meses</option>
-          </Select>
+          <Controller
+            control={control}
+            name="credito.plazo"
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className={errors.credito?.plazo ? 'border-red-500 focus:ring-red-500' : ''}>
+                  <SelectValue placeholder="Selecciona" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="12">12 meses</SelectItem>
+                  <SelectItem value="24">24 meses</SelectItem>
+                  <SelectItem value="36">36 meses</SelectItem>
+                  <SelectItem value="48">48 meses</SelectItem>
+                  <SelectItem value="60">60 meses</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
         </div>
         <div className="space-y-2 md:col-span-2">
           <label className="text-sm font-medium text-gray-700">Monto (MXN)</label>

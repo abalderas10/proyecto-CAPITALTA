@@ -1,20 +1,31 @@
-import { useFormContext } from 'react-hook-form'
-import { Input, Select } from '@/components/ui/Input'
+import { useFormContext, Controller } from 'react-hook-form'
+import { Input } from '@/components/ui/Input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
 import { Card } from '@/components/ui/Card'
 
 export function Step2_Empleo() {
-  const { register, formState: { errors } } = useFormContext()
+  const { register, control, formState: { errors } } = useFormContext()
   return (
     <Card className="p-8 shadow-lg border-t-4 border-t-purple-600">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Situación Laboral</label>
-          <Select {...register('empleo.situacion')} className={errors.empleo?.situacion ? 'border-red-500 focus-visible:ring-red-500' : ''}>
-            <option value="">Selecciona</option>
-            <option value="ASALARIADO">Asalariado</option>
-            <option value="INDEPENDIENTE">Independiente</option>
-            <option value="JUBILADO">Jubilado</option>
-          </Select>
+          <Controller
+            control={control}
+            name="empleo.situacion"
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className={errors.empleo?.situacion ? 'border-red-500 focus:ring-red-500' : ''}>
+                  <SelectValue placeholder="Selecciona" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ASALARIADO">Asalariado</SelectItem>
+                  <SelectItem value="INDEPENDIENTE">Independiente</SelectItem>
+                  <SelectItem value="JUBILADO">Jubilado</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Empresa/Negocio</label>
@@ -26,12 +37,22 @@ export function Step2_Empleo() {
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Antigüedad</label>
-          <Select {...register('empleo.antiguedad')} className={errors.empleo?.antiguedad ? 'border-red-500 focus-visible:ring-red-500' : ''}>
-            <option value="">Selecciona</option>
-            <option value="MENOS_1">Menos de 1 año</option>
-            <option value="1_A_3">1 a 3 años</option>
-            <option value="MAS_3">Más de 3 años</option>
-          </Select>
+          <Controller
+            control={control}
+            name="empleo.antiguedad"
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className={errors.empleo?.antiguedad ? 'border-red-500 focus:ring-red-500' : ''}>
+                  <SelectValue placeholder="Selecciona" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MENOS_1">Menos de 1 año</SelectItem>
+                  <SelectItem value="1_A_3">1 a 3 años</SelectItem>
+                  <SelectItem value="MAS_3">Más de 3 años</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Ingreso Mensual (MXN)</label>

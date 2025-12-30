@@ -1,10 +1,11 @@
-import { useFormContext } from 'react-hook-form';
-import { Input, Select } from '@/components/ui/Input';
+import { useFormContext, Controller } from 'react-hook-form';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Card } from '@/components/ui/Card';
 import { DollarSign, CalendarDays, FileText, PieChart } from 'lucide-react';
 
 export function Step3_Credito() {
-  const { register, formState: { errors } } = useFormContext();
+  const { register, control, formState: { errors } } = useFormContext();
   
   return (
     <Card className="p-8 shadow-lg border-t-4 border-t-teal-600">
@@ -19,14 +20,21 @@ export function Step3_Credito() {
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
               <PieChart size={16} className="text-teal-600" /> Tipo de Crédito
             </label>
-            <Select 
-              {...register('credito.tipo')} 
-              className={errors.credito?.tipo ? 'border-red-500 focus-visible:ring-red-500' : ''}
-            >
-              <option value="">Selecciona una opción</option>
-              <option value="PUENTE">Crédito Puente</option>
-              <option value="CAPITAL_TRABAJO">Capital de Trabajo</option>
-            </Select>
+            <Controller
+              control={control}
+              name="credito.tipo"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <SelectTrigger className={errors.credito?.tipo ? 'border-red-500 focus:ring-red-500' : ''}>
+                    <SelectValue placeholder="Selecciona una opción" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PUENTE">Crédito Puente</SelectItem>
+                    <SelectItem value="CAPITAL_TRABAJO">Capital de Trabajo</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.credito?.tipo && (
               <p className="text-xs text-red-500 font-medium">{errors.credito.tipo.message as string}</p>
             )}
@@ -36,16 +44,23 @@ export function Step3_Credito() {
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
               <CalendarDays size={16} className="text-teal-600" /> Plazo Deseado
             </label>
-            <Select 
-              {...register('credito.plazo')} 
-              className={errors.credito?.plazo ? 'border-red-500 focus-visible:ring-red-500' : ''}
-            >
-              <option value="">Selecciona un plazo</option>
-              <option value="12">12 meses</option>
-              <option value="18">18 meses</option>
-              <option value="24">24 meses</option>
-              <option value="36">36 meses</option>
-            </Select>
+            <Controller
+              control={control}
+              name="credito.plazo"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <SelectTrigger className={errors.credito?.plazo ? 'border-red-500 focus:ring-red-500' : ''}>
+                    <SelectValue placeholder="Selecciona un plazo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="12">12 meses</SelectItem>
+                    <SelectItem value="18">18 meses</SelectItem>
+                    <SelectItem value="24">24 meses</SelectItem>
+                    <SelectItem value="36">36 meses</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.credito?.plazo && (
               <p className="text-xs text-red-500 font-medium">{errors.credito.plazo.message as string}</p>
             )}

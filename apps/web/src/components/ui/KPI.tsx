@@ -1,8 +1,21 @@
-export function KPI({ value, label }: { value: string; label: string }) {
+import { cn } from "@/lib/utils"
+
+interface KPIProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: string
+  label: string
+}
+
+export function KPI({ value, label, className, ...props }: KPIProps) {
   return (
-    <div className="rounded-xl p-4 bg-white border border-[var(--brand-slate)] text-center">
-      <div className="text-xl font-bold text-[var(--brand-primary)]">{value}</div>
-      <div className="text-sm text-gray-600">{label}</div>
+    <div 
+      className={cn(
+        "rounded-xl p-4 bg-background border border-border text-center shadow-sm",
+        className
+      )}
+      {...props}
+    >
+      <div className="text-xl font-bold text-primary">{value}</div>
+      <div className="text-sm text-muted-foreground">{label}</div>
     </div>
   )
 }
