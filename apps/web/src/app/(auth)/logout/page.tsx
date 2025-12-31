@@ -1,8 +1,11 @@
 "use client"
+import { useEffect } from 'react'
+import { signOut } from 'next-auth/react'
+
 export default function Page() {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('token')
-    location.href = '/'
-  }
+  useEffect(() => {
+    signOut({ callbackUrl: '/' })
+  }, [])
+  
   return null
 }

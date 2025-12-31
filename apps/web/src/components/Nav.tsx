@@ -1,19 +1,12 @@
 "use client"
-import { useEffect, useState } from 'react'
-import { apiGet } from '../lib/api'
+import { useState } from 'react'
 import { Button } from './ui/Button'
 import { Menu, X } from 'lucide-react'
+import { useSession, signOut } from 'next-auth/react'
 
 export function Nav() {
-  const [token, setToken] = useState<string | null>(null)
-  const [role, setRole] = useState<string | null>(null)
+  const { data: session } = useSession()
   const [isOpen, setIsOpen] = useState(false)
-
-  useEffect(() => {
-    const t = localStorage.getItem('token')
-    setToken(t)
-    if (t) apiGet<any>('/me').then(u => setRole(u?.rol || null)).catch(() => setRole(null))
-  }, [])
 
   const toggleMenu = () => setIsOpen(!isOpen)
 
@@ -39,7 +32,7 @@ export function Nav() {
 
           {/* Actions */}
           <div className="hidden md:flex items-center gap-4">
-            {!token ? (
+            {!session ? (
               <>
                 <a href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">Iniciar Sesión</a>
                 <a href="/solicitud">
@@ -48,10 +41,10 @@ export function Nav() {
               </>
             ) : (
               <>
-                {(role === 'ANALISTA' || role === 'ADMIN') && (
+                {(session.user?.rol === 'ANALISTA' || session.user?.rol === 'ADMIN') && (
                   <a href="/admin/solicitudes" className="text-sm font-medium text-gray-600 hover:text-gray-900">Panel Admin</a>
                 )}
-                <a href="/logout" className="text-sm font-medium text-red-600 hover:text-red-700">Salir</a>
+                <button onClick={() => signOut()} className="text-sm font-medium text-red-600 hover:text-red-700">Salir</button>
               </>
             )}
           </div>
@@ -82,7 +75,7 @@ export function Nav() {
                 </>
               ) : (
                 <>
-                  {(role === 'ANALISTA' || role === 'ADMIN') && (
+                  {(session.user?.rol === 'ANALISTA' || session.user?.rol === 'ADMIN') && (
                     <a href="/solicitudes" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Panel Admin</a>
                   )}
                   <button className="text-sm font-medium text-red-600 text-left" onClick={() => { signOut(); toggleMenu() }}>Salir</button>
