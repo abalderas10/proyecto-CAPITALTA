@@ -11,7 +11,9 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Credenciales inválidas')
+        }
         
         try {
           const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.capitalta.abdev.click';
@@ -24,23 +26,24 @@ export const authOptions: NextAuthOptions = {
             })
           });
 
-          const data = await res.json();
+          if (!res.ok) {
+            return null
+          }
 
-          if (!res.ok || !data) {
-            console.error('Error en login backend:', data);
+          const data = await res.json();
+          
+          if (!data) {
+            console.error('Error en login backend: Sin datos');
             return null;
           }
 
-          // Asumiendo que el backend devuelve { token, user: { ... } }
-          // Si devuelve directamente el usuario con token incluido, ajustar aquí.
-          // Mapeamos a la estructura de User de NextAuth
           return {
             id: data.user?.id || 'unknown',
             name: data.user?.nombre,
             email: data.user?.email,
             rol: data.user?.rol,
             organizacionId: data.user?.organizacionId,
-            accessToken: data.token // Guardamos el token para usarlo en la sesión
+            accessToken: data.token
           };
         } catch (error) {
           console.error('Error de conexión con backend:', error);
@@ -55,6 +58,7 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: 'jwt',
+    maxAge: 7 * 24 * 60 * 60, // 7 días
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -71,7 +75,6 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.rol = token.rol as any;
         session.user.organizacionId = token.organizacionId as string | undefined;
-        // Exponemos el token en la sesión para que el cliente lo pueda usar
         (session as any).accessToken = token.accessToken;
       }
       return session;
@@ -79,6 +82,7 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/login',
+    error: '/login',
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

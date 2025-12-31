@@ -76,8 +76,9 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)'
       },
       fontFamily: {
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
-        heading: ['var(--font-heading)', 'system-ui', 'sans-serif']
+        sans: ['Alta', 'system-ui', 'sans-serif'],
+        alta: ['Alta', 'system-ui', 'sans-serif'],
+        heading: ['Alta', 'system-ui', 'sans-serif']
       },
       fontSize: {
         xs: ['0.75rem', { lineHeight: '1rem' }],
