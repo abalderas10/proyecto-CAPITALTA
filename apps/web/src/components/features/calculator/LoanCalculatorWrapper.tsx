@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { LoanCalculator } from './LoanCalculator'
-import { CalculatorConfig } from '@/data/calculatorConfigs'
+import { CalculatorConfig } from '@/lib/types'
 
 interface LoanCalculatorWrapperProps {
   config: CalculatorConfig

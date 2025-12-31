@@ -6,7 +6,7 @@ import { Slider } from "@/components/ui/Slider"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
 import { Button } from "@/components/ui/Button"
-import { CalculatorConfig } from "@/data/calculatorConfigs"
+import { CalculatorConfig } from "@/lib/types"
 import { calcularPrestamo } from "@/lib/utils/loanCalculator"
 import { useRouter } from "next/navigation"
 

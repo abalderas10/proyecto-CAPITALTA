@@ -12,7 +12,7 @@ export function Nav() {
   useEffect(() => {
     const t = localStorage.getItem('token')
     setToken(t)
-    if (t) apiGet('/me').then(u => setRole(u?.rol || null)).catch(() => setRole(null))
+    if (t) apiGet<any>('/me').then(u => setRole(u?.rol || null)).catch(() => setRole(null))
   }, [])
 
   const toggleMenu = () => setIsOpen(!isOpen)

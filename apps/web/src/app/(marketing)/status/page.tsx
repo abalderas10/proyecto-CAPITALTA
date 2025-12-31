@@ -10,9 +10,9 @@ export const metadata = {
 }
 
 export default async function StatusPage() {
-  const health = await apiGet('/health').catch(() => ({ ok: false }))
-  const version = await apiGet('/version').catch(() => ({ name: 'api', version: 'unknown' }))
-  const db = await apiGet('/db/health').catch(() => ({ ok: false }))
+  const health = await apiGet('/health').catch(() => ({ ok: false })) as any
+  const version = await apiGet('/version').catch(() => ({ name: 'api', version: 'unknown' })) as any
+  const db = await apiGet('/db/health').catch(() => ({ ok: false })) as any
   return (
     <main className="max-w-xl mx-auto py-10 space-y-4">
       <h1 className="text-2xl font-bold">Conectividad</h1>

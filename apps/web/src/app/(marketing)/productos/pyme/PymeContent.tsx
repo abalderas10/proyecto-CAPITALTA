@@ -37,7 +37,7 @@ export function PymeContent() {
         subtitle={c.heroSubheadline || c.subtitle} 
         primary={c.ctaPrimary} 
         secondary={c.ctaSecondary}
-        image="/images/hero-pyme.svg"
+        image="/images/hero-pyme.png"
       />
       
       <Section title="Nos respaldan">
