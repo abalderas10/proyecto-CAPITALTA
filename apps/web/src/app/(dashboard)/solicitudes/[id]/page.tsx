@@ -16,11 +16,11 @@ export default function Page({ params }: { params: { id: string } }) {
   const load = async () => {
     try {
       const s = await apiGet(`/solicitudes/${id}`)
-      setSol(s)
+      setSol(s as any)
       const e = await apiGet(`/solicitudes/${id}/eventos`)
-      setEvents(e)
+      setEvents(e as any)
       const d = await apiGet(`/solicitudes/${id}/documentos`)
-      setDocs(d)
+      setDocs(d as any)
     } catch {}
   }
   useEffect(() => { load() }, [id])

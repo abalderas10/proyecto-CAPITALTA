@@ -22,7 +22,7 @@ export default function Page() {
     qs.set('page', String(page))
     qs.set('pageSize', String(10))
     try {
-      const r = await apiGet(`/solicitudes?${qs.toString()}`)
+      const r: any = await apiGet(`/solicitudes?${qs.toString()}`)
       setItems(r.items || [])
       setTotal(r.total || 0)
     } catch (e) {
