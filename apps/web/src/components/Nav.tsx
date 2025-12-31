@@ -1,5 +1,6 @@
 "use client"
 import { useState } from 'react'
+import Link from 'next/link'
 import { Button } from './ui/Button'
 import { Menu, X } from 'lucide-react'
 import { useSession, signOut } from 'next-auth/react'
@@ -15,36 +16,36 @@ export function Nav() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <img src="/CAPITALTA.svg" alt="Capitalta" className="h-8" />
             <span className="font-bold text-xl text-gray-900 hidden sm:block">Capitalta</span>
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
-            <a href="/productos" className="text-sm font-medium text-gray-600 hover:text-teal-600">Productos</a>
-            <a href="/calculadora" className="text-sm font-medium text-gray-600 hover:text-teal-600">Calculadora</a>
-            <a href="/proceso" className="text-sm font-medium text-gray-600 hover:text-teal-600">Proceso</a>
-            <a href="/requisitos" className="text-sm font-medium text-gray-600 hover:text-teal-600">Requisitos</a>
-            <a href="/faq" className="text-sm font-medium text-gray-600 hover:text-teal-600">FAQ</a>
-            <a href="/contacto" className="text-sm font-medium text-gray-600 hover:text-teal-600">Contacto</a>
+            <Link href="/productos" className="text-sm font-medium text-gray-600 hover:text-teal-600">Productos</Link>
+            <Link href="/calculadora" className="text-sm font-medium text-gray-600 hover:text-teal-600">Calculadora</Link>
+            <Link href="/proceso" className="text-sm font-medium text-gray-600 hover:text-teal-600">Proceso</Link>
+            <Link href="/requisitos" className="text-sm font-medium text-gray-600 hover:text-teal-600">Requisitos</Link>
+            <Link href="/faq" className="text-sm font-medium text-gray-600 hover:text-teal-600">FAQ</Link>
+            <Link href="/contacto" className="text-sm font-medium text-gray-600 hover:text-teal-600">Contacto</Link>
           </nav>
 
           {/* Actions */}
           <div className="hidden md:flex items-center gap-4">
             {!session ? (
               <>
-                <a href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">Iniciar Sesión</a>
-                <a href="/solicitud">
+                <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900">Iniciar Sesión</Link>
+                <Link href="/solicitud">
                   <Button size="sm">Cotizar ahora</Button>
-                </a>
+                </Link>
               </>
             ) : (
               <>
                 {(session.user?.rol === 'ANALISTA' || session.user?.rol === 'ADMIN') && (
-                  <a href="/admin/solicitudes" className="text-sm font-medium text-gray-600 hover:text-gray-900">Panel Admin</a>
+                  <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-gray-900">Dashboard</Link>
                 )}
-                <button onClick={() => signOut()} className="text-sm font-medium text-red-600 hover:text-red-700">Salir</button>
+                <button onClick={() => signOut({ callbackUrl: '/' })} className="text-sm font-medium text-red-600 hover:text-red-700">Salir</button>
               </>
             )}
           </div>
