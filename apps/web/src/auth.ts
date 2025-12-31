@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  // adapter: PrismaAdapter(prisma), // Temporarily disabled due to type conflicts with NextAuth v5 beta
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -73,9 +73,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.rol = token.rol;
-        session.accessToken = token.backendToken;
+        session.user.id = token.id as string;
+        session.user.rol = token.rol as string;
+        session.accessToken = token.backendToken as string;
       }
       return session;
     },

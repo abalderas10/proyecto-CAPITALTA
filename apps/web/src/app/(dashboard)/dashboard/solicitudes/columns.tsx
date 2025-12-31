@@ -14,7 +14,7 @@ export type Solicitud = {
   producto: string
   monto: number
   fecha: string
-  status: "Pendiente" | "En Revisión" | "Aprobada" | "Rechazada"
+  status: string
 }
 
 export const columns: ColumnDef<Solicitud>[] = [

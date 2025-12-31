@@ -121,7 +121,7 @@ export default function DashboardPage() {
                   tickFormatter={(value) => `$${value/1000000}M`} 
                 />
                 <Tooltip 
-                  formatter={(value: number) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value)}
+                  formatter={(value) => value ? new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(value)) : ''}
                   cursor={{ fill: 'transparent' }}
                 />
                 <Bar dataKey="amount" fill="#0f172a" radius={[4, 4, 0, 0]} />

@@ -1,5 +1,7 @@
-
+'use client';
 import { CalculatorConfig } from '@/lib/types';
+
+export type { CalculatorConfig };
 
 export const constructoraConfig: CalculatorConfig = {
   title: "Simula tu Crédito Puente",

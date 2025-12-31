@@ -18,9 +18,9 @@ export default function Page({ params }: { params: { id: string } }) {
       const s = await apiGet(`/solicitudes/${id}`)
       setSol(s)
       const e = await apiGet(`/solicitudes/${id}/eventos`)
-      setEvents(e)
+      setEvents(e as any[])
       const d = await apiGet(`/solicitudes/${id}/documentos`)
-      setDocs(d)
+      setDocs(d as any[])
     } catch {}
   }
   useEffect(() => { load() }, [id])
