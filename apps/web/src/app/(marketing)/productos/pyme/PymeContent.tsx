@@ -1,9 +1,9 @@
 "use client"
 
 import { useRouter } from 'next/navigation'
-import { copyConstructoras } from '@/content/copy'
+import { copyPyme } from '@/content/copy'
 import { LoanCalculatorWrapper } from '@/components/features/calculator/LoanCalculatorWrapper'
-import { constructoraConfig } from '@/data/calculatorConfigs'
+import { pymeConfig } from '@/data/calculatorConfigs'
 import { Hero } from '@/components/Hero'
 import { Section } from '@/components/ui/Section'
 import { KPI } from '@/components/ui/KPI'
@@ -13,24 +13,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { 
-  CheckCircle2, 
-  HardHat, 
-  Building2, 
-  Ruler, 
-  FileText, 
-  SearchCheck, 
-  Coins,
+  Laptop, 
+  ShieldCheck, 
+  TrendingUp, 
+  UserPlus, 
+  PieChart, 
+  Banknote, 
+  CheckCircle2,
   Rocket,
-  ShieldCheck,
   Handshake
 } from 'lucide-react'
 
-export function ConstructoraContent() {
-  const c = copyConstructoras
+export function PymeContent() {
+  const c = copyPyme
   const router = useRouter()
-  
-  const benefitIcons = [HardHat, Building2, Ruler]
-  const processIcons = [FileText, SearchCheck, Handshake, Coins]
+  const benefitIcons = [Laptop, ShieldCheck, TrendingUp]
+  const processIcons = [UserPlus, PieChart, Handshake, Banknote]
 
   return (
     <main className="max-w-5xl mx-auto py-12 space-y-20">
@@ -39,7 +37,7 @@ export function ConstructoraContent() {
         subtitle={c.heroSubheadline || c.subtitle} 
         primary={c.ctaPrimary} 
         secondary={c.ctaSecondary}
-        image="/images/hero-construction.svg"
+        image="/images/hero-pyme.svg"
       />
       
       <Section title="Nos respaldan">
@@ -53,12 +51,11 @@ export function ConstructoraContent() {
       {/* KPIs Section */}
       <section className="py-16 bg-primary/5 rounded-3xl">
         <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Resultados que Hablan por Sí Mismos</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {c.kpis.map((kpi) => (
-              <div key={kpi} className="text-center">
-                <div className="text-5xl font-bold text-primary mb-2">{kpi.split(' ')[0]}</div>
-                <div className="text-lg text-muted-foreground">{kpi.split(' ').slice(1).join(' ')}</div>
+          <h2 className="text-3xl font-bold text-center mb-12">Resultados Comprobados</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-200">
+            {c.kpis.map((k) => (
+              <div key={k} className="p-4">
+                <KPI value={k.split(' ')[0]} label={k.substring(k.indexOf(' ')+1)} />
               </div>
             ))}
           </div>
@@ -93,41 +90,13 @@ export function ConstructoraContent() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Optimizamos cada paso para que te enfoques en construir, no en trámites.
+                    Impulsa tu negocio con capital rápido y condiciones claras.
                   </p>
                 </CardContent>
               </Card>
             )
           })}
         </div>
-      </section>
-
-      {/* Use Cases Section */}
-      <section className="py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">¿Para Qué Usarlo?</h2>
-        <Tabs defaultValue={c.useCases[0]} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-3 h-auto">
-            {c.useCases.map((useCase) => (
-              <TabsTrigger key={useCase} value={useCase} className="h-12">
-                {useCase}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {c.useCases.map((useCase) => (
-            <TabsContent key={useCase} value={useCase} className="mt-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{useCase}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Financiamiento flexible diseñado específicamente para cubrir las necesidades de {useCase.toLowerCase()} en tu proyecto.
-                  </p>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          ))}
-        </Tabs>
       </section>
 
       {c.hybridProcess && (
@@ -162,6 +131,88 @@ export function ConstructoraContent() {
         </section>
       )}
 
+      {c.useCases && (
+        <Section title="Sectores">
+          <Tabs defaultValue={c.useCases[0]} className="w-full">
+            <TabsList className="w-full flex flex-wrap h-auto gap-2 bg-transparent justify-center mb-8">
+              {c.useCases.map((u) => (
+                <TabsTrigger 
+                  key={u} 
+                  value={u}
+                  className="px-6 py-3 rounded-full border bg-white data-[state=active]:bg-primary data-[state=active]:text-white"
+                >
+                  {u}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {c.useCases.map((u) => (
+              <TabsContent key={u} value={u} className="mt-0">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-2xl text-primary">{u}</CardTitle>
+                    <CardDescription>Soluciones para tu industria</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-lg text-muted-foreground">
+                      Entendemos los retos de <strong>{u.toLowerCase()}</strong>. 
+                      Nuestros asesores tienen experiencia en tu sector para ofrecerte la mejor solución.
+                    </p>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </Section>
+      )}
+
+      {/* FAQs Section */}
+      <section className="max-w-3xl mx-auto w-full space-y-8">
+        <h2 className="text-3xl font-bold text-center">Preguntas frecuentes</h2>
+        <Accordion type="single" collapsible className="w-full">
+          {c.faqs.map((f, i) => (
+            <AccordionItem key={i} value={`item-${i}`}>
+              <AccordionTrigger className="text-left text-lg font-medium">
+                {f.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-base">
+                {f.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </section>
+
+      {c.process && (
+        <section className="space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl font-bold">Proceso Transparente</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Simple, rápido y seguro. Así es obtener capital con nosotros.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+            <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-gray-200 -z-10" />
+            
+            {c.process.map((p, i) => {
+               const Icon = processIcons[i] || CheckCircle2
+               return (
+                <div key={p.step} className="flex flex-col items-center text-center space-y-4 bg-white p-6 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-12 h-12 bg-white border-2 border-primary text-primary rounded-full flex items-center justify-center font-bold text-xl shadow-sm relative z-10">
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-xs font-bold text-primary uppercase tracking-wider">Paso 0{i + 1}</div>
+                    <h3 className="font-bold text-lg leading-tight">{p.step}</h3>
+                    <p className="text-sm text-muted-foreground">{p.detail}</p>
+                  </div>
+                </div>
+               )
+            })}
+          </div>
+        </section>
+      )}
+
       {/* Testimonials Section */}
       <section className="py-16 bg-white">
         <h2 className="text-3xl font-bold text-center mb-12">Lo Que Dicen Nuestros Clientes</h2>
@@ -187,27 +238,32 @@ export function ConstructoraContent() {
         </div>
       </section>
 
-      {/* FAQs Section */}
-      <section className="py-16 max-w-3xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-12">Preguntas Frecuentes</h2>
-        <Accordion type="single" collapsible className="w-full">
-          {c.faqs.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-left font-medium">{faq.q}</AccordionTrigger>
-              <AccordionContent className="text-muted-foreground">
-                {faq.a}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </section>
+      <div className="space-y-4">
+        <LoanCalculatorWrapper config={pymeConfig} redirectPath="/solicitud" />
+        <p className="text-center text-sm text-muted-foreground">
+          Proceso 100% digital hasta la firma del contrato.
+        </p>
+      </div>
+
+      {c.compliance && (
+        <section className="border-t pt-8">
+          <div className="flex flex-wrap justify-center gap-4">
+            {c.compliance.map((x) => (
+              <div key={x} className="flex items-center gap-2 text-sm text-muted-foreground bg-gray-50 px-3 py-1.5 rounded-full border">
+                <ShieldCheck className="w-4 h-4" />
+                {x}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Final CTA Section */}
       <section className="py-20 bg-primary text-primary-foreground rounded-3xl text-center">
         <div className="max-w-4xl mx-auto px-4 space-y-8">
-          <h2 className="text-4xl font-bold">¿Listo para Impulsar tu Proyecto?</h2>
+          <h2 className="text-4xl font-bold">¿Listo para Impulsar tu Negocio?</h2>
           <p className="text-xl opacity-90">
-            Obtén tu crédito en 24 horas y empieza a construir el futuro.
+            Obtén tu crédito en 24 horas y empieza a crecer.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
@@ -234,156 +290,6 @@ export function ConstructoraContent() {
           </p>
         </div>
       </section>
-    </main>
-  )
-}                  <Card key={card.title} className="bg-white border-none shadow-xl">
-                    <CardHeader>
-                      <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-4 text-white">
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <CardTitle>{card.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {card.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {c.useCases && (
-        <Section title="¿Para qué usarlo?">
-          <Tabs defaultValue={c.useCases[0]} className="w-full">
-            <TabsList className="w-full flex flex-wrap h-auto gap-2 bg-transparent justify-center mb-8">
-              {c.useCases.map((u) => (
-                <TabsTrigger 
-                  key={u} 
-                  value={u}
-                  className="px-6 py-3 rounded-full border bg-white data-[state=active]:bg-primary data-[state=active]:text-white"
-                >
-                  {u}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {c.useCases.map((u) => (
-              <TabsContent key={u} value={u} className="mt-0">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-2xl text-primary">{u}</CardTitle>
-                    <CardDescription>Casos de uso frecuentes</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-lg text-muted-foreground">
-                      Utiliza tu línea de crédito para <strong>{u.toLowerCase()}</strong> y mantén el flujo de caja de tu obra saludable.
-                      Nuestra solución se adapta a las necesidades específicas de este tipo de requerimiento.
-                    </p>
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Disponibilidad inmediata</li>
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Sin penalizaciones por prepago</li>
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Facturación deducible</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            ))}
-          </Tabs>
-        </Section>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-200">
-        {c.kpis.map((k) => (
-          <div key={k} className="p-4">
-            <KPI value={k.split(' ')[0]} label={k.substring(k.indexOf(' ')+1)} />
-          </div>
-        ))}
-      </div>
-
-      <section className="max-w-3xl mx-auto w-full space-y-8">
-        <h2 className="text-3xl font-bold text-center">Preguntas frecuentes</h2>
-        <Accordion type="single" collapsible className="w-full">
-          {c.faqs.map((f, i) => (
-            <AccordionItem key={i} value={`item-${i}`}>
-              <AccordionTrigger className="text-left text-lg font-medium">
-                {f.q}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground text-base">
-                {f.a}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </section>
-
-      {c.process && (
-        <section className="space-y-12">
-          <div className="text-center space-y-4">
-            <h2 className="text-3xl font-bold">Proceso Transparente</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Desde la solicitud hasta el desembolso, cada paso está diseñado para ser claro y eficiente.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-            <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-gray-200 -z-10" />
-            
-            {c.process.map((p, i) => {
-               const Icon = processIcons[i] || CheckCircle2
-               return (
-                <div key={p.step} className="flex flex-col items-center text-center space-y-4 bg-white p-6 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
-                  <div className="w-12 h-12 bg-white border-2 border-primary text-primary rounded-full flex items-center justify-center font-bold text-xl shadow-sm relative z-10">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-xs font-bold text-primary uppercase tracking-wider">Paso 0{i + 1}</div>
-                    <h3 className="font-bold text-lg leading-tight">{p.step}</h3>
-                    <p className="text-sm text-muted-foreground">{p.detail}</p>
-                  </div>
-                </div>
-               )
-            })}
-          </div>
-        </section>
-      )}
-
-      {c.testimonials && (
-        <section className="space-y-8 bg-slate-900 text-white -mx-4 px-4 py-16 md:rounded-3xl text-center">
-          <h2 className="text-3xl font-bold">Lo que dicen nuestros clientes</h2>
-          <div className="grid md:grid-cols-1 gap-8 max-w-2xl mx-auto">
-            {c.testimonials.map((t) => (
-              <div key={t.author} className="space-y-6">
-                <div className="text-4xl text-primary opacity-50">“</div>
-                <p className="text-2xl font-medium leading-relaxed">{t.quote}</p>
-                <div className="font-bold text-primary text-lg">— {t.author}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <div className="space-y-4">
-        <LoanCalculatorWrapper config={constructoraConfig} redirectPath="/solicitud" />
-        <p className="text-center text-sm text-muted-foreground">
-          Proceso 100% digital hasta la firma del contrato.
-        </p>
-      </div>
-
-      {c.compliance && (
-        <section className="border-t pt-8">
-          <div className="flex flex-wrap justify-center gap-4">
-            {c.compliance.map((x) => (
-              <div key={x} className="flex items-center gap-2 text-sm text-muted-foreground bg-gray-50 px-3 py-1.5 rounded-full border">
-                <ShieldCheck className="w-4 h-4" />
-                {x}
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
     </main>
   )
 }

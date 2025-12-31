@@ -15,34 +15,71 @@ import {
   Pie, 
   Cell 
 } from 'recharts'
+import { useGetSolicitudes } from '@/hooks/useSolicitudes'
+import { formatDistanceToNow } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 export default function DashboardPage() {
+  const { data, isLoading } = useGetSolicitudes({ pageSize: 100 });
+  const solicitudes = data?.items || [];
+
+  // Calculate Stats
+  const totalSolicitudes = data?.total || 0;
+  const totalMonto = solicitudes.reduce((acc, curr) => acc + Number(curr.monto), 0);
+  
+  const aprobadas = solicitudes.filter(s => s.status === 'APROBADO').length;
+  const tasaAprobacion = totalSolicitudes > 0 ? Math.round((aprobadas / totalSolicitudes) * 100) : 0;
+  
+  const urgentes = solicitudes.filter(s => s.status === 'REVISION').length; // Assuming REVISION needs attention
+
   const stats = [
-    { title: "Solicitudes Totales", value: "25", icon: FileText, color: "text-blue-500", desc: "+2 desde ayer" },
-    { title: "Monto Total", value: "$18.5M", icon: DollarSign, color: "text-green-500", desc: "En proceso" },
-    { title: "Tasa Aprobación", value: "68%", icon: TrendingUp, color: "text-purple-500", desc: "Últimos 30 días" },
-    { title: "Urgentes", value: "3", icon: AlertCircle, color: "text-red-500", desc: "Requieren atención" },
+    { title: "Solicitudes Totales", value: totalSolicitudes.toString(), icon: FileText, color: "text-blue-500", desc: "Totales registradas" },
+    { title: "Monto Total", value: new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', notation: "compact" }).format(totalMonto), icon: DollarSign, color: "text-green-500", desc: "En pipeline" },
+    { title: "Tasa Aprobación", value: `${tasaAprobacion}%`, icon: TrendingUp, color: "text-purple-500", desc: "Histórico" },
+    { title: "En Revisión", value: urgentes.toString(), icon: AlertCircle, color: "text-red-500", desc: "Requieren atención" },
   ]
 
-  const productData = [
-    { name: 'Crédito Puente', amount: 12500000 },
-    { name: 'Pyme', amount: 4200000 },
-    { name: 'Liquidez', amount: 1800000 },
-  ]
+  // Calculate Product Data
+  const productMap = solicitudes.reduce((acc, curr) => {
+    const prod = curr.producto || 'Otro';
+    acc[prod] = (acc[prod] || 0) + Number(curr.monto);
+    return acc;
+  }, {} as Record<string, number>);
 
-  const statusData = [
-    { name: 'Pendiente', value: 12, color: '#eab308' }, // yellow-500
-    { name: 'En Revisión', value: 5, color: '#3b82f6' }, // blue-500
-    { name: 'Aprobada', value: 8, color: '#22c55e' }, // green-500
-    { name: 'Rechazada', value: 2, color: '#ef4444' }, // red-500
-  ]
+  const productData = Object.entries(productMap).map(([name, amount]) => ({ name, amount }));
 
-  const notifications = [
-    { id: 1, title: "Nueva solicitud urgente", desc: "Constructora Atlas requiere revisión inmediata.", time: "Hace 15 min", urgent: true },
-    { id: 2, title: "Documentos actualizados", desc: "Cafetería Luna subió estados financieros.", time: "Hace 1 hora", urgent: false },
-    { id: 3, title: "Solicitud aprobada", desc: "Préstamo #4023 ha sido aprobado por Riesgos.", time: "Hace 3 horas", urgent: false },
-    { id: 4, title: "Falta documentación", desc: "Solicitud #4025 incompleta.", time: "Hace 5 horas", urgent: false },
-  ]
+  // Calculate Status Data
+  const statusMap = solicitudes.reduce((acc, curr) => {
+    const status = curr.status || 'PENDIENTE';
+    acc[status] = (acc[status] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const statusColors: Record<string, string> = {
+    'PENDIENTE': '#eab308', // yellow-500
+    'REVISION': '#3b82f6', // blue-500
+    'APROBADO': '#22c55e', // green-500
+    'RECHAZADO': '#ef4444', // red-500
+  };
+
+  const statusData = Object.entries(statusMap).map(([name, value]) => ({
+    name,
+    value,
+    color: statusColors[name] || '#94a3b8' // slate-400 fallback
+  }));
+
+  // Recent Activity (using latest 5 solicitudes)
+  const recentActivity = solicitudes.slice(0, 5).map(s => ({
+    id: s.id,
+    title: `Nueva solicitud: ${s.producto}`,
+    desc: `${s.cliente || 'Cliente'} - ${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(s.monto))}`,
+    time: s.createdAt ? formatDistanceToNow(new Date(s.createdAt), { addSuffix: true, locale: es }) : 'Reciente',
+    urgent: s.status === 'REVISION'
+  }));
+
+  if (isLoading) {
+    return <div className="p-8">Cargando dashboard...</div>;
+  }
 
   return (
     <div className="space-y-8">
@@ -125,15 +162,15 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Notificaciones y Tareas</CardTitle>
-            <CardDescription>Actividad reciente que requiere tu atención</CardDescription>
+            <CardTitle>Actividad Reciente</CardTitle>
+            <CardDescription>Últimas solicitudes recibidas</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {notifications.map((n) => (
+              {recentActivity.length > 0 ? recentActivity.map((n) => (
                 <div key={n.id} className="flex items-start space-x-4 border-b pb-4 last:border-0">
-                  <div className={`p-2 rounded-full ${n.urgent ? 'bg-red-100' : 'bg-primary/10'}`}>
-                    <Bell className={`h-4 w-4 ${n.urgent ? 'text-red-600' : 'text-primary'}`} />
+                  <div className={`p-2 rounded-full ${n.urgent ? 'bg-blue-100' : 'bg-primary/10'}`}>
+                    <Bell className={`h-4 w-4 ${n.urgent ? 'text-blue-600' : 'text-primary'}`} />
                   </div>
                   <div className="space-y-1 flex-1">
                     <div className="flex justify-between">
@@ -143,7 +180,9 @@ export default function DashboardPage() {
                     <p className="text-sm text-muted-foreground">{n.desc}</p>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <p className="text-sm text-muted-foreground">No hay actividad reciente.</p>
+              )}
             </div>
           </CardContent>
         </Card>
