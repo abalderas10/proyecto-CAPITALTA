@@ -59,26 +59,26 @@ export function Nav() {
         {isOpen && (
           <div className="md:hidden py-4 border-t space-y-4">
             <nav className="flex flex-col gap-4">
-              <a href="/productos" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Productos</a>
-              <a href="/calculadora" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Calculadora</a>
-              <a href="/proceso" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Proceso</a>
-              <a href="/requisitos" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Requisitos</a>
-              <a href="/faq" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>FAQ</a>
-              <a href="/contacto" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Contacto</a>
+              <Link href="/productos" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Productos</Link>
+              <Link href="/calculadora" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Calculadora</Link>
+              <Link href="/proceso" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Proceso</Link>
+              <Link href="/requisitos" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Requisitos</Link>
+              <Link href="/faq" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>FAQ</Link>
+              <Link href="/contacto" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Contacto</Link>
               <hr />
               {!session ? (
                 <>
-                  <a href="/login" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Iniciar Sesión</a>
-                  <a href="/solicitud" onClick={toggleMenu}>
+                  <Link href="/login" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Iniciar Sesión</Link>
+                  <Link href="/solicitud" onClick={toggleMenu}>
                     <Button className="w-full">Cotizar ahora</Button>
-                  </a>
+                  </Link>
                 </>
               ) : (
                 <>
                   {(session.user?.rol === 'ANALISTA' || session.user?.rol === 'ADMIN') && (
-                    <a href="/solicitudes" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Panel Admin</a>
+                    <Link href="/dashboard" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Dashboard</Link>
                   )}
-                  <button className="text-sm font-medium text-red-600 text-left" onClick={() => { signOut(); toggleMenu() }}>Salir</button>
+                  <button className="text-sm font-medium text-red-600 text-left" onClick={() => { signOut({ callbackUrl: '/' }); toggleMenu() }}>Salir</button>
                 </>
               )}
             </nav>
