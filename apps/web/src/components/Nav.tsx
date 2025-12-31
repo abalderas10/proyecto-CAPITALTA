@@ -73,7 +73,7 @@ export function Nav() {
               <a href="/faq" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>FAQ</a>
               <a href="/contacto" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Contacto</a>
               <hr />
-              {!token ? (
+              {!session ? (
                 <>
                   <a href="/login" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Iniciar Sesión</a>
                   <a href="/solicitud" onClick={toggleMenu}>
@@ -85,7 +85,7 @@ export function Nav() {
                   {(role === 'ANALISTA' || role === 'ADMIN') && (
                     <a href="/solicitudes" className="text-sm font-medium text-gray-600" onClick={toggleMenu}>Panel Admin</a>
                   )}
-                  <a href="/logout" className="text-sm font-medium text-red-600" onClick={toggleMenu}>Salir</a>
+                  <button className="text-sm font-medium text-red-600 text-left" onClick={() => { signOut(); toggleMenu() }}>Salir</button>
                 </>
               )}
             </nav>

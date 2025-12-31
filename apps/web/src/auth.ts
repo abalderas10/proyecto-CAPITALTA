@@ -1,12 +1,8 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -17,23 +13,39 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
         
-        const user = await prisma.usuario.findUnique({
-          where: { email: credentials.email }
-        });
+        try {
+          const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.capitalta.abdev.click';
+          const res = await fetch(`${backendUrl}/auth/login`, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password
+            })
+          });
 
-        if (!user || !user.passwordHash) return null;
+          const data = await res.json();
 
-        const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
+          if (!res.ok || !data) {
+            console.error('Error en login backend:', data);
+            return null;
+          }
 
-        if (!isValid) return null;
-
-        return {
-          id: user.id,
-          name: user.nombre,
-          email: user.email,
-          rol: user.rol,
-          organizacionId: user.organizacionId || undefined
-        };
+          // Asumiendo que el backend devuelve { token, user: { ... } }
+          // Si devuelve directamente el usuario con token incluido, ajustar aquí.
+          // Mapeamos a la estructura de User de NextAuth
+          return {
+            id: data.user?.id || 'unknown',
+            name: data.user?.nombre,
+            email: data.user?.email,
+            rol: data.user?.rol,
+            organizacionId: data.user?.organizacionId,
+            accessToken: data.token // Guardamos el token para usarlo en la sesión
+          };
+        } catch (error) {
+          console.error('Error de conexión con backend:', error);
+          return null;
+        }
       }
     }),
     GoogleProvider({
@@ -50,6 +62,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.rol = (user as any).rol;
         token.organizacionId = (user as any).organizacionId;
+        token.accessToken = (user as any).accessToken;
       }
       return token;
     },
@@ -58,6 +71,8 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.rol = token.rol as any;
         session.user.organizacionId = token.organizacionId as string | undefined;
+        // Exponemos el token en la sesión para que el cliente lo pueda usar
+        (session as any).accessToken = token.accessToken;
       }
       return session;
     }

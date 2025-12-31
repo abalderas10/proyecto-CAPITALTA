@@ -10,11 +10,13 @@ declare module "next-auth" {
       rol: 'ADMIN' | 'ANALISTA' | 'CLIENTE'
       organizacionId?: string
     } & DefaultSession["user"]
+    accessToken?: string
   }
 
   interface User {
     rol: 'ADMIN' | 'ANALISTA' | 'CLIENTE'
     organizacionId?: string
+    accessToken?: string
   }
 }
 
@@ -23,5 +25,6 @@ declare module "next-auth/jwt" {
     id: string
     rol: 'ADMIN' | 'ANALISTA' | 'CLIENTE'
     organizacionId?: string
+    accessToken?: string
   }
 }
