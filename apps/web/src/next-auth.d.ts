@@ -9,6 +9,7 @@ declare module 'next-auth' {
       name: string
       rol: string
       organizacionId?: string
+      image?: string
     }
     accessToken: string
   }
