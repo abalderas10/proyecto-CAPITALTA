@@ -15,9 +15,10 @@ import { Spinner } from "@/components/ui/Spinner"
 export default function SolicitudDetailPage({ params }: { params: { id: string } }) {
   const { data: solicitud, isLoading: isLoadingSol } = useGetSolicitudById(params.id)
   const { data: documents, isLoading: isLoadingDocs } = useGetDocumentos(params.id)
+  const { data: garantias, isLoading: isLoadingGarantias } = useGetGarantias(params.id)
   const { data: events, isLoading: isLoadingEvents } = useGetEventos(params.id)
 
-  if (isLoadingSol || isLoadingDocs || isLoadingEvents) {
+  if (isLoadingSol || isLoadingDocs || isLoadingEvents || isLoadingGarantias) {
      return <div className="flex justify-center p-10"><Spinner className="h-8 w-8" /></div>
   }
 
