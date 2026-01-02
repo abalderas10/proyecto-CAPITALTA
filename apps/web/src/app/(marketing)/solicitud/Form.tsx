@@ -9,9 +9,14 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { FileUpload } from '@/components/ui/FileUpload'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useCreateGarantia, useGetGarantias, useDeleteGarantia } from '@/hooks/useGarantias'
+import { useUploadDocumento, useGetDocumentos } from '@/hooks/useDocumentos'
+import { Plus, Trash2, CheckCircle, FileText } from 'lucide-react'
 
 // Schema only for Organization now, since User is authenticated
 const orgSchema = z.object({
@@ -26,21 +31,34 @@ const creditoSchema = z.object({
   plazoMeses: z.number().int().positive("El plazo debe ser positivo")
 })
 
+const garantiaSchema = z.object({
+  tipo: z.string().min(1, "Selecciona un tipo"),
+  valor: z.number().positive("El valor debe ser positivo"),
+  descripcion: z.string().optional()
+})
+
 export default function Form() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [step, setStep] = useState(0)
-  // We don't need to store IDs manually anymore, backend handles linking via session
+  const [currentSolicitudId, setCurrentSolicitudId] = useState<string | null>(null)
+  
   const [toast, setToast] = useState<{msg: string, type: 'success' | 'error'} | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [checkingOrg, setCheckingOrg] = useState(true)
   
+  // Hooks for Step 2 & 3
+  const { data: garantias, refetch: refetchGarantias } = useGetGarantias(currentSolicitudId || '')
+  const createGarantia = useCreateGarantia()
+  const { data: documentos, refetch: refetchDocumentos } = useGetDocumentos(currentSolicitudId || '')
+  const uploadDocumento = useUploadDocumento()
+
   const notify = (msg: string, type: 'success' | 'error' = 'success') => { 
     setToast({ msg, type }); 
     setTimeout(() => setToast(null), 3000) 
   }
   
-  const steps = [{ title: 'Empresa' }, { title: 'Crédito' }, { title: 'Garantías' }, { title: 'Documentos' }, { title: 'Condiciones' }]
+  const steps = [{ title: 'Empresa' }, { title: 'Crédito' }, { title: 'Garantías' }, { title: 'Documentos' }, { title: 'Finalizar' }]
 
   const orgForm = useForm({ 
     resolver: zodResolver(orgSchema),
@@ -60,20 +78,21 @@ export default function Form() {
     }
   })
 
+  const garantiaForm = useForm({
+    resolver: zodResolver(garantiaSchema),
+    defaultValues: {
+      tipo: '',
+      valor: 0,
+      descripcion: ''
+    }
+  })
+
   // Check for existing organization when session loads
   useEffect(() => {
     if (status === 'authenticated') {
       const checkOrg = async () => {
         try {
-          // We can try to fetch the org from a new endpoint or just try to create one and see if it exists
-          // Or better, let's just assume we start at step 0, and if we submit and they have one, the API handles it.
-          // However, for UX, skipping step 0 if they already have an org is better.
-          // Let's call the org endpoint to 'get or create' logic? No, let's just use GET /api/organizaciones/me if we had it.
-          // For now, let's keep it simple: We'll let them fill it out, or we can fetch.
-          // Actually, let's add a quick check.
-          // Since I didn't create a GET endpoint yet, I'll assume they need to fill it out OR 
-          // I can rely on the fact that if they submit, the backend links them.
-          // Let's implement the submit logic to handle "already exists".
+          // Placeholder for checking existing org
           setCheckingOrg(false)
         } catch (e) {
           setCheckingOrg(false)
@@ -154,17 +173,75 @@ export default function Form() {
         throw new Error(data.message || 'Error al crear solicitud')
       }
 
+      // Store ID for next steps
+      if (data.id) {
+        setCurrentSolicitudId(data.id)
+      } else {
+        // Fallback if ID is not returned directly (should be checked)
+        console.warn('No ID returned from create solicitud')
+      }
+
       // Clear calculator local storage
       localStorage.removeItem('prefilledMonto')
       localStorage.removeItem('prefilledPlazo')
       
-      notify('Solicitud creada exitosamente')
-      setStep(2) // Move to next step (Garantías - placeholder for now)
+      notify('Solicitud creada. Ahora agrega garantías.')
+      setStep(2) 
     } catch (error: any) {
       notify(error.message, 'error')
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const submitGarantia = async (e: any) => {
+    e.preventDefault()
+    const valid = await garantiaForm.trigger()
+    if (!valid) return
+    if (!currentSolicitudId) {
+        notify('Error: No hay solicitud activa', 'error')
+        return
+    }
+
+    try {
+        const values = garantiaForm.getValues()
+        await createGarantia.mutateAsync({
+            ...values,
+            solicitudId: currentSolicitudId
+        })
+        notify('Garantía agregada')
+        garantiaForm.reset({ tipo: '', valor: 0, descripcion: '' })
+        refetchGarantias()
+    } catch (error: any) {
+        notify('Error al agregar garantía', 'error')
+    }
+  }
+
+  const handleFileUpload = async (file: File, docType: string) => {
+    if (!currentSolicitudId) return
+    
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('type', docType) // Backend likely needs to know document type
+    
+    try {
+        await uploadDocumento.mutateAsync({
+            solicitudId: currentSolicitudId,
+            formData
+        })
+        notify(`Documento ${docType} subido correctamente`)
+        refetchDocumentos()
+    } catch (error) {
+        notify('Error al subir documento', 'error')
+    }
+  }
+
+  // Helper to check if a specific doc type is already uploaded
+  const isDocUploaded = (docName: string) => {
+      // Logic depends on how backend names files. 
+      // Assuming 'name' or some metadata field matches docName or we just show all.
+      // For simplicity, we just list uploaded files below.
+      return false
   }
 
   if (status === 'loading' || checkingOrg) {
@@ -212,6 +289,7 @@ export default function Form() {
         </div>
       )}
 
+      {/* STEP 0: EMPRESA */}
       {step === 0 && (
         <Card>
           <div className="p-6">
@@ -259,6 +337,7 @@ export default function Form() {
         </Card>
       )}
 
+      {/* STEP 1: CREDITO */}
       {step === 1 && (
         <Card>
           <div className="p-6">
@@ -318,24 +397,184 @@ export default function Form() {
               <div className="flex justify-between pt-4">
                 <Button type="button" variant="outline" onClick={() => setStep(0)}>Atrás</Button>
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading ? 'Creando...' : 'Crear Solicitud'}
+                  {isLoading ? 'Creando...' : 'Crear y Continuar'}
                 </Button>
               </div>
             </form>
           </div>
         </Card>
       )}
-      
+
+      {/* STEP 2: GARANTIAS */}
       {step === 2 && (
+        <Card>
+            <div className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Garantías</h2>
+                <p className="text-sm text-muted-foreground mb-6">
+                    Registra las garantías que respaldarán tu solicitud. Puedes agregar múltiples.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4 border-r pr-0 md:pr-8 border-border">
+                        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">Nueva Garantía</h3>
+                        <form onSubmit={submitGarantia} className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Tipo de Garantía</label>
+                                <Controller
+                                    control={garantiaForm.control}
+                                    name="tipo"
+                                    render={({ field }) => (
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Selecciona el tipo" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="INMUEBLE_RESIDENCIAL">Inmueble Residencial</SelectItem>
+                                                <SelectItem value="INMUEBLE_COMERCIAL">Inmueble Comercial</SelectItem>
+                                                <SelectItem value="TERRENO">Terreno</SelectItem>
+                                                <SelectItem value="VEHICULO">Vehículo</SelectItem>
+                                                <SelectItem value="EQUIPO">Maquinaria / Equipo</SelectItem>
+                                                <SelectItem value="OTRO">Otro</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    )}
+                                />
+                                {garantiaForm.formState.errors.tipo && <p className="text-sm text-red-500">{garantiaForm.formState.errors.tipo.message as string}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Valor Estimado (MXN)</label>
+                                <Input 
+                                    type="number" 
+                                    placeholder="0.00" 
+                                    {...garantiaForm.register('valor', { valueAsNumber: true })} 
+                                />
+                                {garantiaForm.formState.errors.valor && <p className="text-sm text-red-500">{garantiaForm.formState.errors.valor.message as string}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Descripción / Dirección</label>
+                                <Textarea 
+                                    placeholder="Describe brevemente la garantía o su ubicación..." 
+                                    {...garantiaForm.register('descripcion')} 
+                                />
+                            </div>
+
+                            <Button type="submit" variant="secondary" className="w-full" disabled={createGarantia.isPending}>
+                                <Plus className="w-4 h-4 mr-2" /> Agregar Garantía
+                            </Button>
+                        </form>
+                    </div>
+
+                    <div>
+                        <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground mb-4">Garantías Agregadas</h3>
+                        <div className="space-y-3">
+                            {garantias && garantias.length > 0 ? (
+                                garantias.map((g) => (
+                                    <div key={g.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border border-border">
+                                        <div>
+                                            <p className="font-medium text-sm">{g.tipo.replace('_', ' ')}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(g.valor)}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-6 w-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center">
+                                                <CheckCircle className="h-3 w-3" />
+                                            </div>
+                                            <Button 
+                                                type="button"
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                onClick={() => handleDeleteGarantia(g.id)}
+                                                disabled={deleteGarantia.isPending}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+                                    <p className="text-sm">No has agregado garantías aún.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex justify-between pt-8 border-t mt-8">
+                    <Button type="button" variant="outline" onClick={() => setStep(1)}>Atrás</Button>
+                    <Button type="button" onClick={() => setStep(3)}>
+                        Continuar
+                    </Button>
+                </div>
+            </div>
+        </Card>
+      )}
+
+      {/* STEP 3: DOCUMENTOS */}
+      {step === 3 && (
+        <Card>
+            <div className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Documentación</h2>
+                <p className="text-sm text-muted-foreground mb-6">
+                    Sube los documentos requeridos para agilizar el análisis de tu crédito.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FileUpload 
+                        label="Acta Constitutiva" 
+                        onChange={(file) => file && handleFileUpload(file, 'ACTA_CONSTITUTIVA')}
+                    />
+                     <FileUpload 
+                        label="RFC / Constancia de Situación Fiscal" 
+                        onChange={(file) => file && handleFileUpload(file, 'RFC')}
+                    />
+                     <FileUpload 
+                        label="Comprobante de Domicilio" 
+                        onChange={(file) => file && handleFileUpload(file, 'COMPROBANTE_DOMICILIO')}
+                    />
+                     <FileUpload 
+                        label="Estados Financieros (Últimos 2 años)" 
+                        onChange={(file) => file && handleFileUpload(file, 'ESTADOS_FINANCIEROS')}
+                    />
+                </div>
+
+                <div className="mt-8">
+                    <h3 className="font-medium text-sm mb-4">Documentos Subidos</h3>
+                    <div className="space-y-2">
+                        {documentos?.map((doc) => (
+                            <div key={doc.id} className="flex items-center gap-2 text-sm text-green-600">
+                                <CheckCircle className="w-4 h-4" />
+                                <span>{doc.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex justify-between pt-8 border-t mt-8">
+                    <Button type="button" variant="outline" onClick={() => setStep(2)}>Atrás</Button>
+                    <Button type="button" onClick={() => setStep(4)} disabled={!documentos || documentos.length === 0}>
+                        Finalizar Solicitud
+                    </Button>
+                </div>
+            </div>
+        </Card>
+      )}
+      
+      {/* STEP 4: SUCCESS */}
+      {step === 4 && (
         <Card className="p-12 text-center">
           <div className="mb-4 text-green-600">
             <svg className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold mb-2">¡Solicitud Creada!</h2>
+          <h2 className="text-2xl font-bold mb-2">¡Solicitud Completada!</h2>
           <p className="text-muted-foreground mb-6">
-            Hemos recibido tu solicitud. Un asesor la revisará y te contactará pronto.
+            Hemos recibido tu solicitud completa con garantías y documentos. Un analista revisará tu expediente en breve.
           </p>
           <Button asChild>
             <Link href="/dashboard">Ir al Dashboard</Link>

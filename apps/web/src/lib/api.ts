@@ -23,12 +23,18 @@ export const apiGet = async <T>(url: string): Promise<T> => {
 };
 
 export const apiPost = async <T>(url: string, data: any): Promise<T> => {
-  const response = await apiClient.post<T>(url, data);
+  const config = data instanceof FormData 
+    ? { headers: { 'Content-Type': 'multipart/form-data' } } 
+    : {};
+  const response = await apiClient.post<T>(url, data, config);
   return response.data;
 };
 
 export const apiPatch = async <T>(url: string, data: any): Promise<T> => {
-  const response = await apiClient.patch<T>(url, data);
+  const config = data instanceof FormData 
+    ? { headers: { 'Content-Type': 'multipart/form-data' } } 
+    : {};
+  const response = await apiClient.patch<T>(url, data, config);
   return response.data;
 };
 

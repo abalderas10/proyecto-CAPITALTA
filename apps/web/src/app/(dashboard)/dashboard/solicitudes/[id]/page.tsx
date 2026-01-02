@@ -94,6 +94,40 @@ export default function SolicitudDetailPage({ params }: { params: { id: string }
                         </CardContent>
                     </Card>
                 </TabsContent>
+                <TabsContent value="garantias" className="space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Garantías Registradas</CardTitle>
+                            <CardDescription>Bienes que respaldan la solicitud de crédito</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {garantias?.map((g, i) => (
+                                    <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded">
+                                                <Shield className="h-5 w-5 text-primary" />
+                                            </div>
+                                            <div>
+                                                <p className="font-medium">{g.tipo.replace('_', ' ')}</p>
+                                                {g.descripcion && <p className="text-xs text-muted-foreground">{g.descripcion}</p>}
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="font-bold">
+                                                {new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(g.valor)}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">Valor Estimado</p>
+                                        </div>
+                                    </div>
+                                ))}
+                                {(!garantias || garantias.length === 0) && (
+                                    <div className="text-center text-muted-foreground py-4">No hay garantías registradas.</div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
                 <TabsContent value="docs" className="space-y-4">
                     <Card>
                         <CardHeader>
