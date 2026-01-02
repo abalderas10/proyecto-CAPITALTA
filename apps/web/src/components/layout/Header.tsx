@@ -47,8 +47,8 @@ export function Header({ className, ...props }: React.HTMLAttributes<HTMLDivElem
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={session.user.image || "/avatars/01.png"} alt={session.user.name || "User"} />
-                  <AvatarFallback>{session.user.name?.charAt(0) || "U"}</AvatarFallback>
+                  <AvatarImage src="/avatars/01.png" alt={session.user.name || "User"} />
+                  <AvatarFallback>{session.user.name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
