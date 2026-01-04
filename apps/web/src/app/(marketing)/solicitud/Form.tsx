@@ -50,12 +50,23 @@ export default function Form() {
   // Hooks for Step 2 & 3
   const { data: garantias, refetch: refetchGarantias } = useGetGarantias(currentSolicitudId || '')
   const createGarantia = useCreateGarantia()
+  const deleteGarantia = useDeleteGarantia()
   const { data: documentos, refetch: refetchDocumentos } = useGetDocumentos(currentSolicitudId || '')
   const uploadDocumento = useUploadDocumento()
 
   const notify = (msg: string, type: 'success' | 'error' = 'success') => { 
     setToast({ msg, type }); 
     setTimeout(() => setToast(null), 3000) 
+  }
+
+  const handleDeleteGarantia = async (id: string) => {
+    try {
+      await deleteGarantia.mutateAsync(id)
+      notify('Garantía eliminada')
+      refetchGarantias()
+    } catch (error) {
+      notify('Error al eliminar garantía', 'error')
+    }
   }
   
   const steps = [{ title: 'Empresa' }, { title: 'Crédito' }, { title: 'Garantías' }, { title: 'Documentos' }, { title: 'Finalizar' }]
