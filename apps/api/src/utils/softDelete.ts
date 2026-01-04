@@ -5,7 +5,7 @@ import { Prisma } from '@prisma/client'
  * para excluir registros "eliminados" lógicamente
  */
 export function excludeDeleted<T extends { deletedAt?: Date | null }>(
-  where?: Prisma.UserWhereInput | any
+  where?: any
 ): any {
   return {
     ...where,
@@ -18,7 +18,7 @@ export function excludeDeleted<T extends { deletedAt?: Date | null }>(
  * Útil para auditoría o recuperación
  */
 export function includeDeleted<T extends { deletedAt?: Date | null }>(
-  where?: Prisma.UserWhereInput | any
+  where?: any
 ): any {
   return where || {}
 }

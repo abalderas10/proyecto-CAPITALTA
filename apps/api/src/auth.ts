@@ -31,11 +31,11 @@ export interface TokenPayload {
 }
 
 export function signAccessToken(payload: Omit<TokenPayload, 'iat' | 'exp'>) {
-  return jwt.sign(payload, effectiveAccessSecret, { expiresIn: ACCESS_TOKEN_EXPIRY })
+  return jwt.sign(payload, effectiveAccessSecret as string, { expiresIn: ACCESS_TOKEN_EXPIRY as string })
 }
 
 export function signRefreshToken(payload: Omit<TokenPayload, 'iat' | 'exp'>) {
-  return jwt.sign(payload, effectiveRefreshSecret, { expiresIn: REFRESH_TOKEN_EXPIRY })
+  return jwt.sign(payload, effectiveRefreshSecret as string, { expiresIn: REFRESH_TOKEN_EXPIRY as string })
 }
 
 export async function ensureAuth(req: FastifyRequest, reply: FastifyReply) {
