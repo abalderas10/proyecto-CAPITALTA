@@ -5,11 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/Badge"
 import { Progress } from "@/components/ui/progress"
-import { ArrowLeft, FileText, Download, CheckCircle, Clock } from "lucide-react"
+import { ArrowLeft, FileText, Download, CheckCircle, Clock, Shield } from "lucide-react"
 import Link from "next/link"
 import { useGetSolicitudById } from "@/hooks/useSolicitudes"
 import { useGetDocumentos } from "@/hooks/useDocumentos"
 import { useGetEventos } from "@/hooks/useEventos"
+import { useGetGarantias } from "@/hooks/useGarantias"
 import { Spinner } from "@/components/ui/Spinner"
 
 export default function SolicitudDetailPage({ params }: { params: { id: string } }) {
