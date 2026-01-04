@@ -4,7 +4,13 @@ import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 
 export default async function seedRoutes(app: FastifyInstance) {
-  app.post('/seed', async (req) => {
+  app.post('/seed', async (req, reply) => {
+    // Solo permitir en entorno de desarrollo
+    if (process.env.NODE_ENV === 'production') {
+      reply.code(403)
+      return { error: 'seed_not_allowed_in_production' }
+    }
+    
     const schema = z.object({
       email: z.string().email(),
       nombre: z.string().min(2),

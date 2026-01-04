@@ -36,11 +36,15 @@ model Usuario {
   mfaEnabled      Boolean        @default(false)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
+  deletedAt       DateTime?      // Soft delete
   organizacion    Organizacion?  @relation(fields: [organizacionId], references: [id])
   organizacionId  String?
   solicitudes     Solicitud[]    @relation("SolicitudCliente")
   documentos      Documento[]    @relation("DocumentoOwner")
   eventosActor    Evento[]       @relation("EventoActor")
+
+  @@index([email])
+  @@index([deletedAt])
 }
 
 model Organizacion {
@@ -52,6 +56,10 @@ model Organizacion {
   solicitudes Solicitud[]  @relation("SolicitudOrganizacion")
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?    // Soft delete
+
+  @@index([rfc])
+  @@index([deletedAt])
 }
 
 model Solicitud {
@@ -70,13 +78,17 @@ model Solicitud {
   eventos        Evento[]          @relation("EventoSolicitud")
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
+  deletedAt      DateTime?         // Soft delete
 
   @@index([estado])
+  @@index([clienteId])
+  @@index([organizacionId])
+  @@index([deletedAt])
 }
 
 model Garantia {
   id             String     @id @default(cuid())
-  solicitud      Solicitud  @relation(fields: [solicitudId], references: [id])
+  solicitud      Solicitud  @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
   solicitudId    String
   tipo           String
   ubicacion      String
@@ -84,38 +96,56 @@ model Garantia {
   lat            Float?
   lng            Float?
   createdAt      DateTime   @default(now())
+  deletedAt      DateTime?  // Soft delete
+
+  @@index([solicitudId])
+  @@index([deletedAt])
 }
 
 model Documento {
   id          String    @id @default(cuid())
-  solicitud   Solicitud @relation(fields: [solicitudId], references: [id])
+  solicitud   Solicitud @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
   solicitudId String
   tipo        String
   ruta        String
-  hash        String
+  hash        String    @unique // Prevenir duplicados
   version     Int       @default(1)
   owner       Usuario?  @relation("DocumentoOwner", fields: [ownerId], references: [id])
   ownerId     String?
   createdAt   DateTime  @default(now())
+  deletedAt   DateTime? // Soft delete
+
+  @@index([solicitudId])
+  @@index([ownerId])
+  @@index([deletedAt])
 }
 
 model Evaluacion {
   id           String    @id @default(cuid())
-  solicitud    Solicitud @relation(fields: [solicitudId], references: [id])
+  solicitud    Solicitud @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
   solicitudId  String
   score        Float
   data         Json
   reglas       Json
   createdAt    DateTime  @default(now())
+  deletedAt    DateTime? // Soft delete
+
+  @@index([solicitudId])
+  @@index([deletedAt])
 }
 
 model Evento {
   id           String     @id @default(cuid())
   actor        Usuario?   @relation("EventoActor", fields: [actorId], references: [id])
   actorId      String?
-  solicitud    Solicitud? @relation("EventoSolicitud", fields: [solicitudId], references: [id])
+  solicitud    Solicitud? @relation("EventoSolicitud", fields: [solicitudId], references: [id], onDelete: Cascade)
   solicitudId  String?
   tipo         String
   detalles     Json
   createdAt    DateTime   @default(now())
+
+  @@index([actorId])
+  @@index([solicitudId])
+  @@index([tipo])
+  @@index([createdAt])
 }
