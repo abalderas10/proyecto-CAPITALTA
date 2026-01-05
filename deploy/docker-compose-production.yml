@@ -1,0 +1,92 @@
+version: '3.9'
+
+services:
+  traefik:
+    image: traefik:v2.11
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - capitalta-net
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - TRAEFIK_API_DASHBOARD=true
+      - TRAEFIK_API_INSECURE=false
+      - TRAEFIK_PROVIDERS_DOCKER=true
+      - TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT=false
+      - TRAEFIK_ENTRYPOINTS_WEB_ADDRESS=:80
+      - TRAEFIK_ENTRYPOINTS_WEBSECURE_ADDRESS=:443
+      - TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_EMAIL=admin@capitalta.abdev.click
+      - TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_STORAGE=/letsencrypt/acme.json
+      - TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_HTTPCHALLENGE=true
+      - TRAEFIK_CERTIFICATESRESOLVERS_LETSENCRYPT_ACME_HTTPCHALLENGE_ENTRYPOINT=web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /root/letsencrypt:/letsencrypt
+      - /root/traefik.yml:/traefik.yml:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.traefik-rtr.entrypoints=web"
+      - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.capitalta.abdev.click`)"
+      - "traefik.http.routers.traefik-rtr.middlewares=https-redirect"
+      - "traefik.http.routers.traefik-rtr-secure.entrypoints=websecure"
+      - "traefik.http.routers.traefik-rtr-secure.rule=Host(`traefik.capitalta.abdev.click`)"
+      - "traefik.http.routers.traefik-rtr-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik-rtr-secure.service=api@internal"
+
+  capitalta-db:
+    image: postgres:16-alpine
+    container_name: capitalta-db
+    restart: unless-stopped
+    networks:
+      - capitalta-net
+    environment:
+      POSTGRES_USER: capitalta
+      POSTGRES_PASSWORD: capPass2024Secure
+      POSTGRES_DB: capitalta_prod
+    volumes:
+      - capitalta-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U capitalta"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  capitalta-api:
+    image: capitalta-api:latest
+    container_name: capitalta-api
+    restart: unless-stopped
+    networks:
+      - capitalta-net
+    depends_on:
+      capitalta-db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://capitalta:capPass2024Secure@capitalta-db:5432/capitalta_prod?schema=public
+      JWT_SECRET: B6TyMM8HSPW+Fwpuy2C9xH6tefEPXmp7coYkhh3nB70=
+      JWT_REFRESH_SECRET: gjWwNRhP9QL2OXFv7BmKlWgJCoObWu11uR9oijo7dCs=
+      NEXTAUTH_SECRET: tqaUziKJAR5IXZPZAulx4dkVUU7QvdA40ZILYDwSScU=
+      FRONTEND_ORIGIN: https://capitalta.abdev.click
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.api-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.api-http.entrypoints=web"
+      - "traefik.http.routers.api-http.rule=Host(`api.capitalta.abdev.click`)"
+      - "traefik.http.routers.api-http.middlewares=api-https-redirect"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.rule=Host(`api.capitalta.abdev.click`)"
+      - "traefik.http.routers.api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.api.loadbalancer.server.port=3001"
+
+networks:
+  capitalta-net:
+    driver: bridge
+
+volumes:
+  capitalta-db-data:

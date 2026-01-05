@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import jwt, { SignOptions } from 'jsonwebtoken'
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { prisma } from './db'
 import { errors } from './utils/errors'
@@ -19,8 +19,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // En desarrollo, usar secretos por defecto (solo si están configurados)
-const effectiveAccessSecret = JWT_SECRET || 'dev-access-secret-change-in-production'
-const effectiveRefreshSecret = JWT_REFRESH_SECRET || 'dev-refresh-secret-change-in-production'
+const effectiveAccessSecret: string = JWT_SECRET || 'dev-access-secret-change-in-production'
+const effectiveRefreshSecret: string = JWT_REFRESH_SECRET || 'dev-refresh-secret-change-in-production'
 
 export interface TokenPayload {
   sub: string
@@ -31,11 +31,13 @@ export interface TokenPayload {
 }
 
 export function signAccessToken(payload: Omit<TokenPayload, 'iat' | 'exp'>) {
-  return jwt.sign(payload, effectiveAccessSecret as string, { expiresIn: ACCESS_TOKEN_EXPIRY as string })
+  const options: SignOptions = { expiresIn: ACCESS_TOKEN_EXPIRY as any }
+  return jwt.sign(payload, effectiveAccessSecret, options)
 }
 
 export function signRefreshToken(payload: Omit<TokenPayload, 'iat' | 'exp'>) {
-  return jwt.sign(payload, effectiveRefreshSecret as string, { expiresIn: REFRESH_TOKEN_EXPIRY as string })
+  const options: SignOptions = { expiresIn: REFRESH_TOKEN_EXPIRY as any }
+  return jwt.sign(payload, effectiveRefreshSecret, options)
 }
 
 export async function ensureAuth(req: FastifyRequest, reply: FastifyReply) {
