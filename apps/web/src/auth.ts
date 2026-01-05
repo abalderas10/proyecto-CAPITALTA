@@ -30,12 +30,14 @@ export const authOptions: NextAuthOptions = {
             return null
           }
 
-          const data = await res.json();
-          
-          if (!data) {
+          const response = await res.json();
+
+          if (!response || !response.data) {
             console.error('Error en login backend: Sin datos');
             return null;
           }
+
+          const { data } = response;
 
           return {
             id: data.user?.id || 'unknown',
@@ -43,7 +45,7 @@ export const authOptions: NextAuthOptions = {
             email: data.user?.email,
             rol: data.user?.rol,
             organizacionId: data.user?.organizacionId,
-            accessToken: data.token
+            accessToken: data.accessToken
           };
         } catch (error) {
           console.error('Error de conexión con backend:', error);
