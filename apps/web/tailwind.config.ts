@@ -76,8 +76,8 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)'
       },
       fontFamily: {
-        sans: ['Alta', 'system-ui', 'sans-serif'],
-        alta: ['Alta', 'system-ui', 'sans-serif'],
+        sans: ['Alta', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        alta: ['Alta', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
         heading: ['Alta', 'system-ui', 'sans-serif']
       },
       fontSize: {
