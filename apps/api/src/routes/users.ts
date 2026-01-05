@@ -46,13 +46,15 @@ export default async function usersRoutes(app: FastifyInstance) {
 
       const body = schema.parse((req as any).body)
 
-      // Verificar si el email ya existe (incluyendo soft-deleted)
+      // Verificar si el email ya existe (solo activos)
       const existing = await prisma.usuario.findUnique({
         where: { email: body.email },
       })
-      if (existing) {
+      if (existing && !existing.deletedAt) {
         throw errors.conflict('El email ya está registrado')
       }
+      // Si existe pero está eliminado, se podría considerar reactivar en lugar de crear nuevo
+      // Por ahora, permitimos crear uno nuevo (el UUID será diferente)
 
       // Verificar que la organización existe si se proporciona
       if (body.organizacionId) {

@@ -12,13 +12,13 @@ export default async function eventosRoutes(app: FastifyInstance) {
         const solicitudId = (req as any).params.id as string
         const user = (req as any).user
 
-        // Verificar que la solicitud existe
+        // Verificar que la solicitud existe y no está eliminada
         const solicitud = await prisma.solicitud.findUnique({
           where: { id: solicitudId },
-          select: { clienteId: true },
+          select: { clienteId: true, deletedAt: true },
         })
 
-        if (!solicitud) {
+        if (!solicitud || solicitud.deletedAt) {
           throw errors.notFound('Solicitud')
         }
 

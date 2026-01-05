@@ -104,14 +104,16 @@ export default async function authRoutes(app: FastifyInstance) {
           nombre: true,
           rol: true,
           createdAt: true,
+          deletedAt: true,
         },
       })
-      
-      if (!user) {
+
+      if (!user || user.deletedAt) {
         throw errors.notFound('Usuario')
       }
-      
-      return sendSuccess(reply, user, 200)
+
+      const { deletedAt, ...userData } = user
+      return sendSuccess(reply, userData, 200)
     } catch (err) {
       if (err instanceof Error && 'code' in err) {
         return sendError(reply, err as any)

@@ -17,8 +17,29 @@ dotenv.config()
 const app = Fastify({ logger: true })
 
 // Middleware global de CORS
+const allowedOrigins = [
+  process.env.FRONTEND_ORIGIN || 'https://capitalta.abdev.click',
+  'http://localhost:3000', // Desarrollo local
+  'http://localhost:3001', // Desarrollo local API
+]
+
 app.register(cors, {
-  origin: process.env.FRONTEND_ORIGIN || 'https://capitalta.abdev.click',
+  origin: (origin, callback) => {
+    // Permitir requests sin origin (como Postman, curl)
+    if (!origin) return callback(null, true)
+
+    // En desarrollo, permitir todos los orígenes
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true)
+    }
+
+    // En producción, validar contra lista blanca
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('No permitido por CORS'), false)
+    }
+  },
   credentials: true,
 })
 

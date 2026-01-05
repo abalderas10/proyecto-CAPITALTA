@@ -50,6 +50,12 @@ export default async function solicitudesRoutes(app: FastifyInstance) {
             estado: true,
             clienteId: true,
             createdAt: true,
+            cliente: {
+              select: {
+                email: true,
+                nombre: true,
+              },
+            },
           },
           skip: (page - 1) * pageSize,
           take: pageSize,

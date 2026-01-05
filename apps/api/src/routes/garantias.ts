@@ -48,8 +48,8 @@ export default async function garantiasRoutes(app: FastifyInstance) {
         tipo: z.string().min(1, 'Tipo es requerido'),
         ubicacion: z.string().min(1, 'Ubicación es requerida'),
         avaluoCentavos: z.number().int().positive('Avalúo debe ser positivo'),
-        lat: z.number().optional(),
-        lng: z.number().optional(),
+        lat: z.number().min(-90, 'Latitud debe estar entre -90 y 90').max(90, 'Latitud debe estar entre -90 y 90').optional(),
+        lng: z.number().min(-180, 'Longitud debe estar entre -180 y 180').max(180, 'Longitud debe estar entre -180 y 180').optional(),
       })
 
       const body = schema.parse((req as any).body)
