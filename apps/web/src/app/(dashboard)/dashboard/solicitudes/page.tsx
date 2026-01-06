@@ -12,7 +12,7 @@ import { FileText, Plus } from "lucide-react"
 
 export default function SolicitudesPage() {
   const [page, setPage] = useState(1)
-  const { data, isLoading, isError } = useGetSolicitudes({ page, pageSize: 10 })
+  const { data, isLoading, isError, error } = useGetSolicitudes({ page, pageSize: 10 })
   const solicitudes = data?.items || []
 
   if (isLoading) {
@@ -30,6 +30,9 @@ export default function SolicitudesPage() {
   }
 
   if (isError) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido al cargar solicitudes'
+    console.error('Error loading solicitudes:', error)
+
     return (
       <div className="space-y-8">
         <div>
@@ -40,10 +43,22 @@ export default function SolicitudesPage() {
           <CardContent className="pt-6">
             <div className="text-red-700">
               <p className="font-semibold">Error al cargar solicitudes</p>
-              <p className="text-sm mt-1">Hubo un problema al cargar tus solicitudes. Por favor, intenta de nuevo más tarde.</p>
+              <p className="text-sm mt-2">{errorMessage}</p>
+              <p className="text-xs mt-3 text-red-600">
+                Verifica tu conexión a internet o intenta recargar la página.
+              </p>
             </div>
           </CardContent>
         </Card>
+
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            onClick={() => window.location.reload()}
+          >
+            Reintentar
+          </Button>
+        </div>
       </div>
     )
   }

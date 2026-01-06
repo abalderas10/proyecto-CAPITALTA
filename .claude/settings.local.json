@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(npx prisma:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfix(api): arreglar problemas críticos y mejoras de seguridad\n\nProblemas Críticos Resueltos:\n- Crear directorio /app/uploads en Dockerfile para persistencia de archivos\n- Arreglar query de búsqueda roto en solicitudes (agregar include de cliente)\n- Agregar validación de soft-delete en endpoint /me\n\nMejoras de Seguridad:\n- Agregar protección soft-delete en endpoint de eventos\n- Mejorar validación de usuarios eliminados en registro\n- Agregar validación de coordenadas GPS en garantías (-90/90 lat, -180/180 lng)\n\nMejoras de Desarrollo:\n- Mejorar configuración CORS para permitir localhost en desarrollo\n- Mantener restricción de CORS en producción\n\nCambios en endpoints:\n- GET /solicitudes: ahora incluye datos de cliente (email, nombre)\n- GET /me: valida que usuario no esté soft-deleted\n- POST /users: permite re-registro de usuarios eliminados\n- GET /solicitudes/:id/eventos: valida soft-delete de solicitud\n- POST /garantias: valida rangos de coordenadas GPS\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(ssh:*)",
+      "Bash(curl:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(npm install:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
