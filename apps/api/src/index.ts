@@ -19,28 +19,33 @@ const app = Fastify({ logger: true })
 // Middleware global de CORS
 const allowedOrigins = [
   process.env.FRONTEND_ORIGIN || 'https://capitalta.abdev.click',
+  'https://capitalta-app.vercel.app', // Vercel deployment
   'http://localhost:3000', // Desarrollo local
   'http://localhost:3001', // Desarrollo local API
+  'http://127.0.0.1:3000',
 ]
 
 app.register(cors, {
   origin: (origin, callback) => {
-    // Permitir requests sin origin (como Postman, curl)
+    // Permitir requests sin origin (como Postman, curl, health checks)
     if (!origin) return callback(null, true)
 
-    // En desarrollo, permitir todos los orígenes
+    // Verificar si el origin está en la lista blanca
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    }
+
+    // En desarrollo (NODE_ENV no es production), permitir cualquier origin
     if (process.env.NODE_ENV !== 'production') {
       return callback(null, true)
     }
 
-    // En producción, validar contra lista blanca
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error('No permitido por CORS'), false)
-    }
+    // En producción, rechazar origins no autorizados
+    app.log.warn(`CORS rejected origin: ${origin}`)
+    callback(new Error('No permitido por CORS'), false)
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 })
 
 // Middleware global de rate limiting
