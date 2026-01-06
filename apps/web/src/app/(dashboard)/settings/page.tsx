@@ -1,8 +1,6 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { useTheme } from 'next-themes'
-import { useSession } from 'next-auth/react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card"
 import { Button } from "@/components/ui/Button"
 import { Badge } from "@/components/ui/Badge"
@@ -20,13 +18,11 @@ interface PreferencesState {
 }
 
 export default function SettingsPage() {
-  const { theme, setTheme } = useTheme()
-  const { data: session } = useSession()
   const { data: user, isLoading: userLoading } = useGetCurrentUser()
   const { toast } = useToast()
 
   const [preferences, setPreferences] = useState<PreferencesState>({
-    theme: (theme as any) || 'system',
+    theme: 'system',
     language: 'es',
     emailNotifications: true,
     pushNotifications: false,
@@ -53,9 +49,12 @@ export default function SettingsPage() {
     setIsSaving(true)
     try {
       localStorage.setItem('userPreferences', JSON.stringify(preferences))
-      if (preferences.theme !== theme) {
-        setTheme(preferences.theme)
+
+      // Aplicar tema si es necesario
+      if (preferences.theme !== 'system') {
+        document.documentElement.classList.toggle('dark', preferences.theme === 'dark')
       }
+
       toast({
         title: "Preferencias guardadas",
         description: "Tus configuraciones han sido actualizadas.",
