@@ -11,9 +11,13 @@ const apiClient = axios.create({
 
 // Interceptor para inyectar el token JWT
 apiClient.interceptors.request.use(async (config) => {
-  const session = await getSession();
-  if (session?.accessToken) {
-    config.headers.Authorization = `Bearer ${session.accessToken}`;
+  try {
+    const session = await getSession();
+    if (session?.accessToken) {
+      config.headers.Authorization = `Bearer ${session.accessToken}`;
+    }
+  } catch (error) {
+    console.error('[API] Error getting session:', error);
   }
   return config;
 });
