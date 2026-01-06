@@ -42,7 +42,7 @@ export const apiGet = async <T>(url: string): Promise<T> => {
     const response = await apiClient.get<T>(url);
     return response.data;
   } catch (error: any) {
-    const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Error al cargar datos';
+    const message = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Error al cargar datos';
     throw new Error(message);
   }
 };
@@ -55,7 +55,7 @@ export const apiPost = async <T>(url: string, data: any): Promise<T> => {
     const response = await apiClient.post<T>(url, data, config);
     return response.data;
   } catch (error: any) {
-    const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Error al enviar datos';
+    const message = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Error al enviar datos';
     throw new Error(message);
   }
 };
@@ -68,7 +68,7 @@ export const apiPatch = async <T>(url: string, data: any): Promise<T> => {
     const response = await apiClient.patch<T>(url, data, config);
     return response.data;
   } catch (error: any) {
-    const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Error al actualizar datos';
+    const message = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Error al actualizar datos';
     throw new Error(message);
   }
 };
@@ -78,7 +78,7 @@ export const apiDelete = async <T>(url: string): Promise<T> => {
     const response = await apiClient.delete<T>(url);
     return response.data;
   } catch (error: any) {
-    const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Error al eliminar datos';
+    const message = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Error al eliminar datos';
     throw new Error(message);
   }
 };
