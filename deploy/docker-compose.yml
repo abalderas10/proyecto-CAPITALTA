@@ -22,6 +22,9 @@ services:
   api:
     build:
       context: ../apps/api
+    environment:
+      JWT_SECRET: 63b89b6949114cddb26e313cdc8d48312e1d47a698414dc47603e49d92817f40
+      JWT_REFRESH_SECRET: a27c45dea5f630d55a7256441496a80fba847abea5b3da9a3f53bf1d82518d4f
     env_file:
       - ../apps/api/.env
     volumes:
