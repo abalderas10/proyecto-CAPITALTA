@@ -19,7 +19,7 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 199 89% 48%;
+    --primary: 169 71% 29%;
     --primary-foreground: 210 40% 98%;
     --secondary: 172 66% 50%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -31,23 +31,49 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 199 89% 48%;
+    --ring: 169 71% 29%;
     --radius: 0.5rem;
 
-    /* Brand colors as CSS variables */
-    --brand-primary: #0ea5e9;
-    --brand-primaryDark: #0284c7;
+    /* Brand colors - Updated with Teal #1c7c77 */
+    --brand-primary: #1c7c77;
+    --brand-primaryDark: #155e5a;
+    --brand-primaryLight: #2a9f96;
     --brand-navy: #002c5f;
     --brand-secondary: #14b8a6;
     --brand-accent: #f59e0b;
     --brand-lightBg: #f1f5f9;
     --brand-slate: #e2e8f0;
 
+    /* Teal color scale */
+    --teal-50: #f0fffe;
+    --teal-100: #d8fbf7;
+    --teal-200: #a8f5f0;
+    --teal-300: #6deae4;
+    --teal-400: #3ed8d2;
+    --teal-500: #1c7c77;
+    --teal-600: #147570;
+    --teal-700: #135d5a;
+    --teal-800: #144b48;
+    --teal-900: #13403f;
+    --teal-950: #082422;
+
+    /* Orange/Gold scale */
+    --orange-50: #fffaf0;
+    --orange-100: #ffedd5;
+    --orange-200: #ffdab6;
+    --orange-300: #ffcb84;
+    --orange-400: #ffb84d;
+    --orange-500: #f59e0b;
+    --orange-600: #d97706;
+    --orange-700: #b45309;
+    --orange-800: #92400e;
+    --orange-900: #78350f;
+
     /* Semantic colors */
     --semantic-success: #10b981;
     --semantic-warning: #f59e0b;
     --semantic-error: #ef4444;
-    --semantic-info: #0ea5e9;
+    --semantic-info: #1c7c77;
 
     /* Neutrals */
     --neutral-900: #111827;
@@ -64,7 +90,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 199 89% 48%;
+    --primary: 169 71% 29%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 172 66% 50%;
     --secondary-foreground: 210 40% 98%;
@@ -76,7 +102,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 199 89% 48%;
+    --ring: 169 71% 29%;
   }
 }
 

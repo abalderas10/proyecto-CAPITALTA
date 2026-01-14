@@ -3,6 +3,7 @@ import { ReactNode } from 'react'
 import { Toaster } from '@/components/ui/toaster'
 import { QueryProvider } from '@/providers/QueryProvider'
 import SessionProvider from '@/providers/SessionProvider'
+import { ChatbotWidget } from '@/components/ChatbotWidget'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <SessionProvider>
           <QueryProvider>
             {children}
+            <ChatbotWidget />
           </QueryProvider>
         </SessionProvider>
         <Toaster />

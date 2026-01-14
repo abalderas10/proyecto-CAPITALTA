@@ -18,22 +18,50 @@ const config: Config = {
     },
     extend: {
       colors: {
-        // Brand colors
+        // Brand colors - Updated with Teal #1c7c77 as primary
         brand: {
-          primary: '#0ea5e9',
-          primaryDark: '#0284c7',
+          primary: '#1c7c77',
+          primaryDark: '#155e5a',
+          primaryLight: '#2a9f96',
           navy: '#002c5f',
           secondary: '#14b8a6',
           accent: '#f59e0b',
           lightBg: '#f1f5f9',
           slate: '#e2e8f0'
         },
+        // Teal color scale
+        teal: {
+          50: '#f0fffe',
+          100: '#d8fbf7',
+          200: '#a8f5f0',
+          300: '#6deae4',
+          400: '#3ed8d2',
+          500: '#1c7c77',
+          600: '#147570',
+          700: '#135d5a',
+          800: '#144b48',
+          900: '#13403f',
+          950: '#082422'
+        },
+        // Orange/Gold accent scale
+        orange: {
+          50: '#fffaf0',
+          100: '#ffedd5',
+          200: '#ffdab6',
+          300: '#ffcb84',
+          400: '#ffb84d',
+          500: '#f59e0b',
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f'
+        },
         // Semantic colors
         semantic: {
           success: '#10b981',
           warning: '#f59e0b',
           error: '#ef4444',
-          info: '#0ea5e9'
+          info: '#1c7c77'
         },
         // shadcn/ui color system
         border: 'hsl(var(--border))',
