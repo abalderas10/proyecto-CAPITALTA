@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "postinstall": "cd ../../apps/api && npx prisma generate"
+    "postinstall": "test -d ../../apps/api && cd ../../apps/api && npx prisma generate || true"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
