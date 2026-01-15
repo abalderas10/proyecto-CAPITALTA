@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     
     // Hacer la petición al backend real
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.capitalta.abdev.click'
-    const response = await fetch(`${backendUrl}/users`, {
+    const response = await fetch(`${backendUrl}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

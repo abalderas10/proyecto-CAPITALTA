@@ -10,3 +10,9 @@ apps/*/.env.local
 apps/*/.env.production
 apps/*/.env.development
 deploy/certs/
+
+# Local Netlify folder
+.netlify
+
+.vercel
+.env*.local
