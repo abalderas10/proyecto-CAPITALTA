@@ -1,84 +1,41 @@
-import axios from 'axios';
-import { getSession } from 'next-auth/react';
+import { getSession } from 'next-auth/react'
 
-const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://api.capitalta.abdev.click',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 10000, // 10 segundos timeout
-});
-
-// Interceptor para inyectar el token JWT
-apiClient.interceptors.request.use(async (config) => {
-  try {
-    const session = await getSession();
-    if (session?.accessToken) {
-      config.headers.Authorization = `Bearer ${session.accessToken}`;
-    }
-  } catch (error) {
-    console.error('[API] Error getting session:', error);
+async function getToken() {
+  if (typeof window !== 'undefined') {
+    const session = await getSession()
+    return session?.accessToken || null
   }
-  return config;
-});
+  return null
+}
 
-// Interceptor para manejo de errores
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error('[API Error]', {
-      url: error.config?.url,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
-      message: error.message,
-    });
-    return Promise.reject(error);
-  }
-);
+export async function apiGet<T = any>(path: string): Promise<T> {
+  const base = process.env.NEXT_PUBLIC_API_URL || ''
+  const token = await getToken()
+  const r = await fetch(`${base}${path}`, { cache: 'no-store', headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } })
+  const data = await r.json()
+  return data as T
+}
 
-export const apiGet = async <T>(url: string): Promise<T> => {
-  try {
-    const response = await apiClient.get<T>(url);
-    return response.data;
-  } catch (error: any) {
-    const message = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Error al cargar datos';
-    throw new Error(message);
-  }
-};
+export async function apiPost<T = any>(path: string, body: any): Promise<T> {
+  const base = process.env.NEXT_PUBLIC_API_URL || ''
+  const token = await getToken()
+  const r = await fetch(`${base}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) })
+  const data = await r.json()
+  return data as T
+}
 
-export const apiPost = async <T>(url: string, data: any): Promise<T> => {
-  try {
-    const config = data instanceof FormData
-      ? { headers: { 'Content-Type': 'multipart/form-data' } }
-      : {};
-    const response = await apiClient.post<T>(url, data, config);
-    return response.data;
-  } catch (error: any) {
-    const message = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Error al enviar datos';
-    throw new Error(message);
-  }
-};
+export async function apiPatch<T = any>(path: string, body: any): Promise<T> {
+  const base = process.env.NEXT_PUBLIC_API_URL || ''
+  const token = await getToken()
+  const r = await fetch(`${base}${path}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) })
+  const data = await r.json()
+  return data as T
+}
 
-export const apiPatch = async <T>(url: string, data: any): Promise<T> => {
-  try {
-    const config = data instanceof FormData
-      ? { headers: { 'Content-Type': 'multipart/form-data' } }
-      : {};
-    const response = await apiClient.patch<T>(url, data, config);
-    return response.data;
-  } catch (error: any) {
-    const message = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Error al actualizar datos';
-    throw new Error(message);
-  }
-};
-
-export const apiDelete = async <T>(url: string): Promise<T> => {
-  try {
-    const response = await apiClient.delete<T>(url);
-    return response.data;
-  } catch (error: any) {
-    const message = error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Error al eliminar datos';
-    throw new Error(message);
-  }
-};
+export async function apiDelete<T = any>(path: string): Promise<T> {
+  const base = process.env.NEXT_PUBLIC_API_URL || ''
+  const token = await getToken()
+  const r = await fetch(`${base}${path}`, { method: 'DELETE', headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } })
+  const data = await r.json()
+  return data as T
+}

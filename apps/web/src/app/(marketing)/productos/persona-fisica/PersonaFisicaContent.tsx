@@ -38,7 +38,7 @@ export function PersonaFisicaContent() {
         subtitle={c.heroSubheadline || c.subtitle} 
         primary={c.ctaPrimary} 
         secondary={c.ctaSecondary}
-        image="/images/hero-personafisica.png"
+        image="/images/hero-personafisica.svg"
       />
       
       <Section title="Nos respaldan">

@@ -5,21 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/Badge"
 import { Progress } from "@/components/ui/progress"
-import { ArrowLeft, FileText, Download, CheckCircle, Clock, Shield } from "lucide-react"
+import { ArrowLeft, FileText, Download, CheckCircle, Clock } from "lucide-react"
 import Link from "next/link"
 import { useGetSolicitudById } from "@/hooks/useSolicitudes"
 import { useGetDocumentos } from "@/hooks/useDocumentos"
+import type { Documento } from "@/hooks/useDocumentos"
 import { useGetEventos } from "@/hooks/useEventos"
-import { useGetGarantias } from "@/hooks/useGarantias"
+import type { Evento } from "@/hooks/useEventos"
 import { Spinner } from "@/components/ui/Spinner"
 
 export default function SolicitudDetailPage({ params }: { params: { id: string } }) {
   const { data: solicitud, isLoading: isLoadingSol } = useGetSolicitudById(params.id)
   const { data: documents, isLoading: isLoadingDocs } = useGetDocumentos(params.id)
-  const { data: garantias, isLoading: isLoadingGarantias } = useGetGarantias(params.id)
   const { data: events, isLoading: isLoadingEvents } = useGetEventos(params.id)
 
-  if (isLoadingSol || isLoadingDocs || isLoadingEvents || isLoadingGarantias) {
+  if (isLoadingSol || isLoadingDocs || isLoadingEvents) {
      return <div className="flex justify-center p-10"><Spinner className="h-8 w-8" /></div>
   }
 
@@ -96,40 +96,6 @@ export default function SolicitudDetailPage({ params }: { params: { id: string }
                         </CardContent>
                     </Card>
                 </TabsContent>
-                <TabsContent value="garantias" className="space-y-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Garantías Registradas</CardTitle>
-                            <CardDescription>Bienes que respaldan la solicitud de crédito</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {garantias?.map((g, i) => (
-                                    <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0">
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-primary/10 p-2 rounded">
-                                                <Shield className="h-5 w-5 text-primary" />
-                                            </div>
-                                            <div>
-                                                <p className="font-medium">{g.tipo.replace('_', ' ')}</p>
-                                                {g.descripcion && <p className="text-xs text-muted-foreground">{g.descripcion}</p>}
-                                            </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="font-bold">
-                                                {new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(g.valor)}
-                                            </p>
-                                            <p className="text-xs text-muted-foreground">Valor Estimado</p>
-                                        </div>
-                                    </div>
-                                ))}
-                                {(!garantias || garantias.length === 0) && (
-                                    <div className="text-center text-muted-foreground py-4">No hay garantías registradas.</div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
                 <TabsContent value="docs" className="space-y-4">
                     <Card>
                         <CardHeader>
@@ -138,7 +104,7 @@ export default function SolicitudDetailPage({ params }: { params: { id: string }
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {documents?.map((doc, i) => (
+                                {documents?.map((doc: Documento, i: number) => (
                                     <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0">
                                         <div className="flex items-center gap-3">
                                             <div className="bg-primary/10 p-2 rounded">
@@ -175,7 +141,7 @@ export default function SolicitudDetailPage({ params }: { params: { id: string }
                         </CardHeader>
                         <CardContent>
                              <div className="space-y-6">
-                                {events?.map((note, i) => (
+                                {events?.map((note: Evento, i: number) => (
                                     <div key={i} className="flex gap-4">
                                         <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-bold text-xs">
                                             {note.user.charAt(0)}

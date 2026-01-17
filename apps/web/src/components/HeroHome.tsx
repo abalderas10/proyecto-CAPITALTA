@@ -37,12 +37,11 @@ export function HeroHome() {
           </div>
           
           <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
-             <img 
-               src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070&auto=format&fit=crop" 
-               alt="Construcción y Finanzas" 
-               className="absolute inset-0 w-full h-full object-cover"
-             />
-             <div className="absolute inset-0 bg-gradient-to-tr from-teal-900/40 to-blue-900/20 mix-blend-multiply" />
+             {/* Placeholder for Hero Image */}
+             <div className="absolute inset-0 bg-gradient-to-tr from-teal-500/20 to-blue-500/20 mix-blend-multiply" />
+             <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+               [Imagen Hero / Ilustración]
+             </div>
           </div>
         </div>
       </div>

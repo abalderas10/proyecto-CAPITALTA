@@ -1,50 +1,45 @@
-// Contenido actualizado para /apps/web/src/content/copy.ts
-// Incorpora el funnel completo incluyendo la visita presencial
-
 export const copyConstructoras = {
   title: 'Crédito para Constructoras',
   subtitle: 'Financiamiento especializado para proyectos de construcción con evaluación rápida y transparente.',
   heroHeadline: 'Crédito para tu Constructora en 24 Horas',
-  heroSubheadline: 'Obtén hasta $50 millones para capital de trabajo, materiales o maquinaria. Aprobación con IA, proceso híbrido: digital y presencial.',
+  heroSubheadline: 'Obtén hasta $5 millones para capital de trabajo, materiales o maquinaria. Aprobación con IA, proceso 100% digital.',
   benefits: [
     'Evaluación en menos de 2 minutos',
-    'Garantías inmobiliarias con valoración automatizada (AVM)',
-    'Desembolsos por hitos de obra certificados'
+    'Garantías inmobiliarias con valoración automatizada',
+    'Desembolsos por hitos de obra'
   ],
   kpis: ['+50% tasa de aprobación', '-70% costos operativos', 'NPS >80'],
   ctaPrimary: { label: 'Solicita tu crédito', href: '/solicitud' },
   ctaSecondary: { label: 'Agenda asesoría', href: '/contacto' },
   faqs: [
     { q: '¿Qué documentación necesito?', a: 'Identificación, RFC, estados financieros y garantías.' },
-    { q: '¿Tiempo de respuesta?', a: 'Pre-evaluación inmediata y análisis en horas.' },
-    { q: '¿Por qué necesito una visita presencial?', a: 'Para tu seguridad y la nuestra, la firma del contrato y la formalización de la garantía se realizan en persona con uno de nuestros ejecutivos.' }
+    { q: '¿Tiempo de respuesta?', a: 'Pre‑evaluación inmediata y análisis en horas.' }
   ],
-  heroImagePrompt: 'Professional hero image for construction financing, modern construction site with cranes and scaffolding, architectural blueprint overlays, clean corporate style, warm golden hour light, photo-realistic, depth of field, high contrast, branding colors teal and charcoal, cinematic composition',
+  heroImagePrompt: 'Professional hero image for construction financing, modern site, cranes, architectural blueprint overlays, clean corporate style, warm light, photo-realistic, depth of field, high contrast, branding colors blue and charcoal',
   differentiators: ['Evaluación AVM de garantías', 'Desembolsos por hitos certificados', 'Panel de seguimiento en tiempo real'],
   process: [
-    { step: 'Solicitud en Línea', detail: 'Completa datos y requisitos básicos en minutos desde cualquier dispositivo.' },
-    { step: 'Evaluación Rápida', detail: 'Pre-evaluación automática con IA y análisis por nuestros expertos en construcción.' },
-    { step: 'Visita y Firma', detail: 'Agendamos una visita para la firma del contrato y la formalización de la garantía inmobiliaria.' },
-    { step: 'Desembolso por Hitos', detail: 'Recibe los fondos según el avance certificado de tu obra.' }
+    { step: 'Solicitud', detail: 'Completa datos y requisitos básicos' },
+    { step: 'Evaluación', detail: 'Pre‑evaluación automática y análisis' },
+    { step: 'Formalización', detail: 'Firma y desembolso por hitos' }
   ],
   testimonials: [
-    { author: 'Constructora Atlas', quote: 'Aprobación rápida y seguimiento claro en cada etapa. La visita presencial nos dio mucha confianza.' }
+    { author: 'Constructora Atlas', quote: 'Aprobación rápida y seguimiento claro en cada etapa.' }
   ],
   compliance: ['Transparencia de comisiones', 'KYC/AML automatizado', 'Protección de datos'],
   useCases: ['Capital de trabajo', 'Compra de materiales', 'Adquisición de maquinaria', 'Nuevos proyectos', 'Fianzas y garantías', 'Remodelación y expansión'],
   hybridProcess: {
-    title: 'Un Proceso Híbrido: Lo Mejor de Ambos Mundos',
-    subtitle: 'Combinamos la agilidad de la tecnología con la confianza de un trato personal.',
+    title: 'Modelo híbrido digital + experto',
+    subtitle: 'Combina plataforma tecnológica con acompañamiento especializado en crédito constructor.',
     cards: [
       {
-        title: 'Agilidad Digital',
-        description: 'Aprovecha nuestra plataforma para una pre-aprobación rápida y sin papeleo excesivo.',
-        icon: 'Rocket'
+        icon: 'Rocket',
+        title: 'Onboarding digital acelerado',
+        description: 'Carga documentos, modela tu proyecto y obtén pre‑evaluación en minutos.'
       },
       {
-        title: 'Seguridad Presencial',
-        description: 'Para tu tranquilidad y la nuestra, la firma del contrato y la formalización de la garantía se realizan en una visita presencial con uno de nuestros ejecutivos.',
-        icon: 'ShieldCheck'
+        icon: 'Shield',
+        title: 'Comité y riesgo especializado',
+        description: 'Analistas expertos revisan tu caso y estructuran la línea de crédito adecuada.'
       }
     ]
   }
@@ -52,44 +47,42 @@ export const copyConstructoras = {
 
 export const copyPyme = {
   title: 'Crédito Simple PYME',
-  subtitle: 'Capital de trabajo para PYMEs con proceso 100% digital hasta la firma y seguimiento claro.',
+  subtitle: 'Capital de trabajo para PYMEs con proceso 100% digital y seguimiento claro.',
   heroHeadline: 'Crédito para tu PYME en 24 Horas',
-  heroSubheadline: 'Obtén hasta $5 millones para capital de trabajo, inventario o expansión. Aprobación con IA, proceso híbrido: digital y presencial.',
+  heroSubheadline: 'Obtén hasta $5 millones para capital de trabajo, inventario o expansión. Aprobación con IA, proceso 100% digital.',
   benefits: ['Onboarding digital', 'KYC/AML automatizado', 'Condiciones flexibles'],
   kpis: ['Respuesta < 2 minutos', 'Proceso guiado', 'Transparencia total'],
   ctaPrimary: { label: 'Inicia tu solicitud', href: '/solicitud' },
   ctaSecondary: { label: 'Conoce requisitos', href: '/requisitos/pyme' },
   faqs: [
     { q: '¿Requisitos mínimos?', a: 'Actividad económica comprobable y documentación básica.' },
-    { q: '¿Cómo se desembolsa?', a: 'Transferencia a cuenta registrada tras aprobación y firma.' },
-    { q: '¿Por qué necesito una visita presencial?', a: 'La firma del contrato se realiza en persona para garantizar la seguridad y validez legal del acuerdo.' }
+    { q: '¿Cómo se desembolsa?', a: 'Transferencia a cuenta registrada tras aprobación.' }
   ],
-  heroImagePrompt: 'Professional hero image for SME business financing, modern office workspace with entrepreneurs collaborating, laptop showing financial charts and graphs, minimal aesthetic, bright natural daylight, photo-realistic, shallow depth of field, branding colors teal and white',
+  heroImagePrompt: 'Professional hero image for SME business financing, office workspace, entrepreneurs collaborating, laptop and financial charts, minimal aesthetic, bright daylight, photo-realistic',
   differentiators: ['Proceso digital guiado', 'Condiciones claras', 'Atención dedicada'],
   process: [
-    { step: 'Alta Digital', detail: 'Registro y validación de identidad en línea.' },
-    { step: 'Evaluación Automática', detail: 'Análisis de condiciones y riesgos con IA.' },
-    { step: 'Visita y Firma', detail: 'Agendamos una visita para la firma del contrato.' },
-    { step: 'Desembolso', detail: 'Transferencia inmediata a tu cuenta registrada.' }
+    { step: 'Alta', detail: 'Registro y validación de identidad' },
+    { step: 'Evaluación', detail: 'Análisis de condiciones y riesgos' },
+    { step: 'Desembolso', detail: 'Firma y transferencia' }
   ],
   testimonials: [
-    { author: 'Cafetería Luna', quote: 'El proceso fue simple y recibimos capital a tiempo. La visita fue rápida y profesional.' }
+    { author: 'Cafetería Luna', quote: 'El proceso fue simple y recibimos capital a tiempo.' }
   ],
   compliance: ['Privacidad y seguridad', 'Prevención de fraude', 'Términos claros'],
   useCases: ['Comercio y Retail', 'Servicios profesionales', 'Restaurantes y Alimentos', 'Manufactura y Talleres', 'Tecnología y Startups', 'Salud y Bienestar'],
   hybridProcess: {
-    title: 'Un Proceso Híbrido: Lo Mejor de Ambos Mundos',
-    subtitle: 'Combinamos la agilidad de la tecnología con la confianza de un trato personal.',
+    title: 'Modelo híbrido digital + experto',
+    subtitle: 'Combina una plataforma ágil con asesores que entienden las necesidades de tu PYME.',
     cards: [
       {
-        title: 'Agilidad Digital',
-        description: 'Completa tu solicitud en línea y recibe una pre-aprobación en minutos.',
-        icon: 'Rocket'
+        icon: 'Rocket',
+        title: 'Onboarding digital rápido',
+        description: 'Registra tu negocio, carga tu documentación y recibe una pre‑evaluación en minutos.'
       },
       {
-        title: 'Seguridad Presencial',
-        description: 'La firma del contrato se realiza en una visita presencial con uno de nuestros ejecutivos para garantizar la validez legal.',
-        icon: 'ShieldCheck'
+        icon: 'Shield',
+        title: 'Análisis y soporte especializado',
+        description: 'Equipo experto revisa tu caso y te acompaña para estructurar el crédito adecuado.'
       }
     ]
   }
@@ -99,42 +92,40 @@ export const copyPersonaFisica = {
   title: 'Préstamo con Garantía Inmobiliaria',
   subtitle: 'Financiamiento para personas físicas respaldado por garantía, con tiempos claros y soporte experto.',
   heroHeadline: 'Préstamo para tu Negocio con Garantía Inmobiliaria',
-  heroSubheadline: 'Hasta $5 millones para capital de trabajo, inversión o expansión. Aprobación con IA, proceso híbrido: digital y presencial.',
+  heroSubheadline: 'Hasta $5 millones para capital de trabajo, inversión o expansión. Aprobación con IA, proceso 100% digital.',
   benefits: ['Proceso claro', 'Garantías evaluadas con AVM', 'Acompañamiento personalizado'],
   kpis: ['Evaluación rápida', 'Documentación guiada', 'Atención dedicada'],
   ctaPrimary: { label: 'Solicítalo ahora', href: '/solicitud' },
   ctaSecondary: { label: 'Ver checklist', href: '/requisitos/persona-fisica' },
   faqs: [
     { q: '¿Qué garantía puedo usar?', a: 'Inmuebles con documentación en regla.' },
-    { q: '¿Costos?', a: 'Comisiones y tasas transparentes mostradas antes de firmar.' },
-    { q: '¿Por qué necesito una visita presencial?', a: 'Para verificar la garantía inmobiliaria y formalizar el contrato de forma segura y legal.' }
+    { q: '¿Costos?', a: 'Comisiones y tasas transparentes mostradas antes de firmar.' }
   ],
-  heroImagePrompt: 'Professional hero image for residential home equity loan, elegant modern home exterior with well-maintained garden, subtle financial motif with documents and keys, warm sunset tones, premium aesthetic, photo-realistic, cinematic lighting, branding colors teal and cream',
+  heroImagePrompt: 'Professional hero image for residential home equity loan, elegant home exterior, subtle financial motif, warm tones, premium aesthetic, photo-realistic',
   differentiators: ['Valoración precisa de inmuebles', 'Condiciones y costos claros', 'Soporte humano'],
   process: [
-    { step: 'Solicitud en Línea', detail: 'Completa datos básicos y describe tu garantía inmobiliaria.' },
-    { step: 'Evaluación y Valoración', detail: 'Verificación automática y valoración AVM de tu inmueble.' },
-    { step: 'Visita y Firma', detail: 'Agendamos una visita para verificar la garantía y firmar el contrato.' },
-    { step: 'Desembolso', detail: 'Recibe los fondos en tu cuenta tras la formalización.' }
+    { step: 'Solicitud', detail: 'Datos básicos y garantía' },
+    { step: 'Evaluación', detail: 'Verificación y valoración' },
+    { step: 'Formalización', detail: 'Firma y desembolso' }
   ],
   testimonials: [
-    { author: 'María G.', quote: 'Recibí oferta con claridad y tiempos cumplidos. La visita fue profesional y me dio mucha tranquilidad.' }
+    { author: 'María G.', quote: 'Recibí oferta con claridad y tiempos cumplidos.' }
   ],
   compliance: ['Protección de datos', 'Cumplimiento normativo', 'Información transparente'],
   useCases: ['Consultores y Freelancers', 'Médicos y Salud', 'Abogados y Contadores', 'Arquitectos y Diseñadores', 'Comerciantes y Emprendedores', 'Contratistas Independientes'],
   hybridProcess: {
-    title: 'Un Proceso Híbrido: Lo Mejor de Ambos Mundos',
-    subtitle: 'Combinamos la agilidad de la tecnología con la confianza de un trato personal.',
+    title: 'Modelo híbrido digital + experto',
+    subtitle: 'Combina plataforma tecnológica con asesor especializado en crédito con garantía inmobiliaria.',
     cards: [
       {
-        title: 'Agilidad Digital',
-        description: 'Solicita en línea y recibe una valoración automática de tu inmueble en minutos.',
-        icon: 'Rocket'
+        icon: 'Rocket',
+        title: 'Onboarding digital guiado',
+        description: 'Carga tu información y documentos clave y recibe una pre‑evaluación en minutos.'
       },
       {
-        title: 'Seguridad Presencial',
-        description: 'La verificación de la garantía y la firma del contrato se realizan en una visita presencial para garantizar la seguridad de ambas partes.',
-        icon: 'ShieldCheck'
+        icon: 'Shield',
+        title: 'Análisis y acompañamiento experto',
+        description: 'Especialistas revisan tu caso, validan la garantía y estructuran la mejor opción para ti.'
       }
     ]
   }

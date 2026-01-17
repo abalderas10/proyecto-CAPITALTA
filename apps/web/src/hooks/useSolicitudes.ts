@@ -6,7 +6,7 @@ export interface Solicitud {
   producto: string;
   monto: number;
   plazo: number;
-  status: string;
+  status: "Pendiente" | "En Revisión" | "Aprobada" | "Rechazada";
   cliente: string;
   fecha: string;
   createdAt?: string;

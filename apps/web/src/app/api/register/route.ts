@@ -1,48 +1,55 @@
-import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(request: NextRequest) {
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+
+const registerSchema = z.object({
+  nombre: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
+  email: z.string().email('Email inválido'),
+  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  rol: z.enum(['ADMIN', 'ANALISTA', 'CLIENTE']).default('CLIENTE'),
+});
+
+export async function POST(req: Request) {
   try {
-    // Obtener el body de la petición
-    const body = await request.json()
-    
-    // Validar campos requeridos
-    if (!body.email || !body.password || !body.nombre) {
+    const body = await req.json();
+    const { nombre, email, password, rol } = registerSchema.parse(body);
+
+    const existingUser = await prisma.usuario.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
       return NextResponse.json(
-        { error: 'Email, password y nombre son requeridos' },
+        { message: 'El correo electrónico ya está registrado' },
         { status: 400 }
-      )
+      );
     }
-    
-    // Hacer la petición al backend real
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.capitalta.abdev.click'
-    const response = await fetch(`${backendUrl}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await prisma.usuario.create({
+      data: {
+        nombre,
+        email,
+        passwordHash: hashedPassword,
+        rol,
       },
-      body: JSON.stringify({
-        email: body.email,
-        password: body.password,
-        nombre: body.nombre
-      })
-    })
-    
-    // Obtener la respuesta del backend
-    const data = await response.json()
-    
-    // Si el backend retorna error, retornarlo con el mismo status code
-    if (!response.ok) {
-      return NextResponse.json(data, { status: response.status })
+    });
+
+    // Remove password from response
+    const { passwordHash, ...userWithoutPassword } = user;
+
+    return NextResponse.json(userWithoutPassword, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ message: error.errors[0].message }, { status: 400 });
     }
-    
-    // Retornar la respuesta exitosa
-    return NextResponse.json(data, { status: 200 })
-    
-  } catch (error: any) {
-    console.error('Error en /api/register:', error)
+    console.error('Registration error:', error);
     return NextResponse.json(
-      { error: 'Error interno del servidor', details: error.message },
+      { message: 'Error interno del servidor' },
       { status: 500 }
-    )
+    );
   }
 }

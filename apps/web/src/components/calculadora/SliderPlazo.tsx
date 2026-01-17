@@ -74,7 +74,7 @@ export function SliderPlazo({
 
         <Slider
           value={[value]}
-          onValueChange={(vals) => onChange(vals[0])}
+          onValueChange={(vals: number[]) => onChange(vals[0])}
           min={minimo}
           max={maximo}
           step={1}

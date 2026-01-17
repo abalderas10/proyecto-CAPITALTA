@@ -39,7 +39,7 @@ export function ConstructoraContent() {
         subtitle={c.heroSubheadline || c.subtitle} 
         primary={c.ctaPrimary} 
         secondary={c.ctaSecondary}
-        image="/images/hero-construction.png"
+        image="/images/hero-construction.svg"
       />
       
       <Section title="Nos respaldan">

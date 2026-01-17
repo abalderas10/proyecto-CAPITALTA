@@ -1,36 +1,24 @@
-import { withAuth } from 'next-auth/middleware'
-import { NextResponse } from 'next/server'
+import type { NextRequest } from "next/server"
+import { NextResponse } from "next/server"
 
-export default withAuth(
-  function middleware(req) {
-    const token = req.nextauth.token
-    const path = req.nextUrl.pathname
-
-    // Permitir acceso a rutas públicas
-    if (path.startsWith('/login') || path.startsWith('/register') || path === '/') {
-      return NextResponse.next()
-    }
-
-    // Verificar autenticación para rutas protegidas
-    if (!token && path.startsWith('/dashboard')) {
-      return NextResponse.redirect(new URL('/login', req.url))
-    }
-
-    // Verificar roles si es necesario
-    if (path.startsWith('/admin') && token?.rol !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/dashboard', req.url))
-    }
-
+export function middleware(req: NextRequest) {
+  if (!req.nextUrl.pathname.startsWith("/dashboard")) {
     return NextResponse.next()
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token
-    },
   }
-)
 
-export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path*', '/solicitud/:path*']
+  const hasSession =
+    req.cookies.get("next-auth.session-token") ||
+    req.cookies.get("__Secure-next-auth.session-token")
+
+  if (!hasSession) {
+    const loginUrl = new URL("/login", req.nextUrl.origin)
+    loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname + req.nextUrl.search)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  return NextResponse.next()
 }
 
+export const config = {
+  matcher: ["/dashboard/:path*"],
+}

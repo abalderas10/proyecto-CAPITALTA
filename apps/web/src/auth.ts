@@ -1,8 +1,13 @@
-import { NextAuthOptions } from 'next-auth';
+import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-export const authOptions: NextAuthOptions = {
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: PrismaAdapter(prisma) as any,
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -12,77 +17,70 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('Credenciales inválidas')
+          throw new Error('Credenciales inválidas');
         }
-        
-        try {
-          const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.capitalta.abdev.click';
-          const res = await fetch(`${backendUrl}/auth/login`, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password
-            })
-          });
 
-          if (!res.ok) {
-            return null
-          }
+        const email = credentials.email as string;
+        const password = credentials.password as string;
 
-          const data = await res.json();
-          
-          if (!data) {
-            console.error('Error en login backend: Sin datos');
-            return null;
-          }
+        const user = await prisma.usuario.findUnique({
+          where: { email }
+        });
 
-          return {
-            id: data.user?.id || 'unknown',
-            name: data.user?.nombre,
-            email: data.user?.email,
-            rol: data.user?.rol,
-            organizacionId: data.user?.organizacionId,
-            accessToken: data.token
-          };
-        } catch (error) {
-          console.error('Error de conexión con backend:', error);
-          return null;
+        if (!user || !user.passwordHash) {
+          throw new Error('Usuario no encontrado');
         }
+
+        const isPasswordValid = await bcrypt.compare(
+          password,
+          user.passwordHash
+        );
+
+        if (!isPasswordValid) {
+          throw new Error('Contraseña incorrecta');
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.nombre,
+          rol: user.rol,
+          accessToken: '',
+        };
       }
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
     }),
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 7 * 24 * 60 * 60, // 7 días
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.rol = (user as any).rol;
-        token.organizacionId = (user as any).organizacionId;
-        token.accessToken = (user as any).accessToken;
+        token.rol = user.rol;
+
+        token.accessToken = jwt.sign(
+          { sub: user.id, email: user.email, rol: user.rol },
+          process.env.JWT_SECRET || 'dev-secret',
+          { expiresIn: '7d' }
+        )
       }
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.rol = token.rol as any;
-        session.user.organizacionId = token.organizacionId as string | undefined;
-        (session as any).accessToken = token.accessToken;
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.rol = token.rol;
+        session.accessToken = token.accessToken;
       }
       return session;
-    }
+    },
   },
   pages: {
     signIn: '/login',
-    error: '/login',
   },
-  secret: process.env.NEXTAUTH_SECRET,
-};
+});

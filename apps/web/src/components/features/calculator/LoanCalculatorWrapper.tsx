@@ -1,25 +1,22 @@
-"use client"
+'use client';
 
-import { useRouter } from 'next/navigation'
-import { LoanCalculator } from './LoanCalculator'
-import { CalculatorConfig } from '@/lib/types'
+import { useRouter } from 'next/navigation';
+import { LoanCalculator } from './LoanCalculator';
+import { CalculatorConfig } from '@/lib/types';
 
 interface LoanCalculatorWrapperProps {
-  config: CalculatorConfig
-  redirectPath?: string
+  config: CalculatorConfig;
+  redirectPath: string;
 }
 
-export function LoanCalculatorWrapper({ config, redirectPath = '/solicitud' }: LoanCalculatorWrapperProps) {
-  const router = useRouter()
+export function LoanCalculatorWrapper({ config, redirectPath }: LoanCalculatorWrapperProps) {
+  const router = useRouter();
 
   const handleApply = (monto: number, plazo: number) => {
-    // Save to localStorage so the application form can pick it up
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('prefilledMonto', monto.toString())
-      localStorage.setItem('prefilledPlazo', plazo.toString())
-    }
-    router.push(redirectPath)
-  }
+    localStorage.setItem('prefilledMonto', monto.toString());
+    localStorage.setItem('prefilledPlazo', plazo.toString());
+    router.push(redirectPath);
+  };
 
-  return <LoanCalculator config={config} onApply={handleApply} />
+  return <LoanCalculator config={config} onApply={handleApply} />;
 }
