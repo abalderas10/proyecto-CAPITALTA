@@ -4,11 +4,5 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://api.capitalta.abdev.click/api/:path*"
-    }
-  ]
+  "framework": "nextjs"
 }
