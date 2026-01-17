@@ -1,5 +1,5 @@
-import { CheckCircle } from 'lucide-react'
-import { Button } from './ui/Button'
+import { CheckCircle } from "lucide-react"
+import { Button } from "./ui/Button"
 
 export function HeroHome() {
   return (
@@ -9,15 +9,25 @@ export function HeroHome() {
           <div className="space-y-8">
             <h1 className="text-5xl md:text-6xl font-bold leading-tight text-gray-900">
               Financiación PYME <br />
-              <span className="text-teal-600">especializada en construcción</span>
+              <span className="bg-gradient-primary bg-clip-text text-transparent">
+                especializada en construcción
+              </span>
             </h1>
             <p className="text-xl text-gray-600 max-w-lg">
               Decisiones inteligentes en minutos, con tecnología y experiencia sectorial.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href="/solicitud"><Button className="w-full sm:w-auto text-lg px-8 py-6">Cotizar ahora</Button></a>
-              <a href="/productos"><Button variant="outline" className="w-full sm:w-auto text-lg px-8 py-6">Conocer más</Button></a>
+              <a href="/solicitud">
+                <Button variant="gradient" className="w-full sm:w-auto px-8 py-6 text-lg">
+                  Cotizar ahora
+                </Button>
+              </a>
+              <a href="/productos">
+                <Button variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg">
+                  Conocer más
+                </Button>
+              </a>
             </div>
 
             <div className="flex flex-wrap gap-4 text-sm font-medium text-gray-700">
